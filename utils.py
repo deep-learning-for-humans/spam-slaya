@@ -54,11 +54,8 @@ def test_ai():
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
-            {
-                "role": "user",
-                "content": "Tell a joke to my 3sb friends."
-            }
-        ]
+            {"role": "user", "content": "Tell a joke to my 3sb friends."},
+        ],
     )
 
     print(completion.choices[0].message)

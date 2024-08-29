@@ -28,6 +28,7 @@ CLIENT_SECRETS_FILE = "client_secret.json"
 def index():
     return '<a href="/login">Login with Gmail</a>'
 
+
 @app.route("/test")
 def test():
     resp = test_ai()
@@ -86,20 +87,20 @@ def gmail_actions():
     email_str = ""
     for message in messages:
         msg = service.users().messages().get(userId="me", id=message["id"]).execute()
-        del_action = infer_email_type(msg['snippet'])
+        del_action = infer_email_type(msg["snippet"])
 
-        email_list.append({
-            "id": message["id"],
-            "subj": msg['payload']['headers'][0]['value'],
-            "snippet": msg['snippet'],
-            "to_delete": del_action
-        })
+        email_list.append(
+            {
+                "id": message["id"],
+                "subj": msg["payload"]["headers"][0]["value"],
+                "snippet": msg["snippet"],
+                "to_delete": del_action,
+            }
+        )
 
         email_str += f"Subject: {msg['payload']['headers'][0]['value']}<br>"
         email_str += f"Snippet: {msg['snippet']}<br>"
         email_str += f"AI Recommended Action: {del_action}<br><br>"
-
-    
 
     return f"Here are your recent emails:<br><br>{email_str}"
 
