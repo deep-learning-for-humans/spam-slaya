@@ -8,6 +8,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
+from utils import infer_email_type, test_ai
+
 app = Flask(__name__)
 app.secret_key = "foobar"  # Replace with a real secret key
 
@@ -25,6 +27,12 @@ CLIENT_SECRETS_FILE = "client_secret.json"
 @app.route("/")
 def index():
     return '<a href="/login">Login with Gmail</a>'
+
+@app.route("/test")
+def test():
+    resp = test_ai()
+
+    return resp.content
 
 
 @app.route("/login")
@@ -71,16 +79,29 @@ def gmail_actions():
 
     # Here you can implement your Gmail actions (read, move, delete)
     # For example:
-    results = service.users().messages().list(userId="me", maxResults=10).execute()
+    results = service.users().messages().list(userId="me", maxResults=5).execute()
     messages = results.get("messages", [])
 
-    email_list = ""
+    email_list = []
+    email_str = ""
     for message in messages:
         msg = service.users().messages().get(userId="me", id=message["id"]).execute()
-        email_list += f"Subject: {msg['payload']['headers'][0]['value']}<br>"
-        email_list += f"Snippet: {msg['snippet']}<br><br>"
+        del_action = infer_email_type(msg['snippet'])
 
-    return f"Here are your recent emails:<br><br>{email_list}"
+        email_list.append({
+            "id": message["id"],
+            "subj": msg['payload']['headers'][0]['value'],
+            "snippet": msg['snippet'],
+            "to_delete": del_action
+        })
+
+        email_str += f"Subject: {msg['payload']['headers'][0]['value']}<br>"
+        email_str += f"Snippet: {msg['snippet']}<br>"
+        email_str += f"AI Recommended Action: {del_action}<br><br>"
+
+    
+
+    return f"Here are your recent emails:<br><br>{email_str}"
 
 
 if __name__ == "__main__":
