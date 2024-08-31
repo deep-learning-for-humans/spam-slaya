@@ -8,7 +8,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
-from utils import infer_email_type, test_ai
+from utils import infer_email_type, test_ai, generate_actions_table
 
 app = Flask(__name__)
 app.secret_key = "foobar"  # Replace with a real secret key
@@ -128,11 +128,9 @@ def gmail_actions():
             }
         )
 
-        email_str += f"Subject: {msg['payload']['headers'][0]['value']}<br>"
-        email_str += f"Snippet: {msg['snippet']}<br>"
-        email_str += f"AI Recommended Action: {del_action}<br><br>"
+    html = generate_actions_table(email_list) 
 
-    return f"Here are your recent emails:<br><br>{email_str}"
+    return html
 
 
 if __name__ == "__main__":
