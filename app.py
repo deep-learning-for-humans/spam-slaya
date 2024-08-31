@@ -3,7 +3,7 @@ import os
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 
-from flask import Flask, redirect, request, session, url_for
+from flask import Flask, current_app, redirect, request, session, url_for
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
@@ -12,6 +12,8 @@ from utils import infer_email_type, test_ai
 
 app = Flask(__name__)
 app.secret_key = "foobar"  # Replace with a real secret key
+with app.app_context():
+    current_app.config["OPENAI_API_KEY"] = None
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = [
@@ -67,6 +69,34 @@ def oauth2callback():
         "client_secret": credentials.client_secret,
         "scopes": credentials.scopes,
     }
+    return redirect(url_for("llm_activate"))
+
+
+@app.route("/llm-activate")
+def llm_activate():
+    with app.app_context():
+        if not current_app.config["OPENAI_API_KEY"]:
+            html = """
+            <h1>Enter your OpenAI API Key</h1>
+    <form action="/store-key" method="post">
+        <label for="api-key">API Key:</label>
+        <input type="text" id="api-key" name="api_key" required>
+        <button type="submit">Submit</button>
+    </form>
+            """
+        return html
+
+
+@app.route("/store-key", methods=["POST"])
+def handle_form_submission():
+    # Get the API key from the form data
+    api_key = request.form.get("api_key")
+    with app.app_context():
+        current_app.config["OPENAI_API_KEY"] = api_key
+        os.environ["OPENAI_API_KEY"] = api_key
+
+    print(os.environ["OPENAI_API_KEY"])
+
     return redirect(url_for("gmail_actions"))
 
 
