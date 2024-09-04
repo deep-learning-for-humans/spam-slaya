@@ -3,7 +3,7 @@ import os
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 
-from flask import Flask, current_app, redirect, request, session, url_for
+from flask import Flask, current_app, redirect, request, session, url_for, render_template
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
@@ -28,7 +28,8 @@ CLIENT_SECRETS_FILE = "client_secret.json"
 
 @app.route("/")
 def index():
-    return '<a href="/login">Login with Gmail</a>'
+    return render_template("index.html")
+    # return '<a href="/login">Login with Gmail</a>'
 
 
 @app.route("/test")
@@ -76,15 +77,9 @@ def oauth2callback():
 def llm_activate():
     with app.app_context():
         if not current_app.config["OPENAI_API_KEY"]:
-            html = """
-            <h1>Enter your OpenAI API Key</h1>
-    <form action="/store-key" method="post">
-        <label for="api-key">API Key:</label>
-        <input type="text" id="api-key" name="api_key" required>
-        <button type="submit">Submit</button>
-    </form>
-            """
-        return html
+            return render_template("llm_activate.html")
+        else:
+            return redirect(url_for("gmail_actions"))
 
 
 @app.route("/store-key", methods=["POST"])
