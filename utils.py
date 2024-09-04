@@ -128,7 +128,7 @@ def generate_actions_table(emails):
         </head>
         <body>
 
-        <h2>Information Table</h2>
+        <h2>Here are your emails and the actions taken</h2>
 
         <table>
             <thead>
