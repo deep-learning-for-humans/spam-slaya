@@ -68,7 +68,7 @@ def get_trs(emails):
     for email in emails:
         tr = f"""<tr>
         <td>{email["subj"]}</td>
-            <td>{email["snippet"]}</td>
+            <td>{email["body"]}</td>
             <td><button>{email["to_delete"]}</button></td>
         </tr>"""
         gen_trs.append(tr)
