@@ -1,12 +1,13 @@
 from flask import Flask, current_app, redirect, request, session, url_for, render_template
+
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
-from utils import infer_email_type, test_ai, generate_actions_table
+from utils import *
 
-import base64
 import os
+
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 app = Flask(__name__)
@@ -102,31 +103,29 @@ def gmail_actions():
     credentials = Credentials(**session["credentials"])
     service = build("gmail", "v1", credentials=credentials)
 
-    # Here you can implement your Gmail actions (read, move, delete)
-    # For example:
     results = service.users().messages().list(userId="me", maxResults=5).execute()
     messages = results.get("messages", [])
 
     email_list = []
-    email_str = ""
     for message in messages:
-        msg = service.users().messages().get(userId="me", id=message["id"], format="full").execute()
-        del_action = infer_email_type(msg["snippet"])
 
-        bodyAsBase64 = msg["payload"]["body"]["data"]
-        body = base64.urlsafe_b64decode(bodyAsBase64).decode('utf-8')
+        msg_raw = service.users().messages().get(userId="me", id=message["id"], format="raw").execute()
+
+        body = get_email_body(msg_raw["raw"])
+        subject = get_email_subject(msg_raw["raw"])
+
+        del_action = infer_email_type(body)
 
         email_list.append(
             {
                 "id": message["id"],
-                "subj": msg["payload"]["headers"][0]["value"],
+                "subj": subject,
                 "body": body,
                 "to_delete": del_action,
             }
         )
 
-    html = generate_actions_table(email_list) 
-
+    html = generate_actions_table(email_list)
     return html
 
 
