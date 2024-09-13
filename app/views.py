@@ -1,6 +1,8 @@
 from flask import request, jsonify, render_template, url_for, session, redirect
 
 from google.oauth2.credentials import Credentials
+from google.oauth2.id_token import verify_oauth2_token
+from google.auth.transport import requests
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
 
@@ -15,6 +17,7 @@ SCOPES = [
     "https://mail.google.com/",
     "https://www.googleapis.com/auth/gmail.labels",
     "https://www.googleapis.com/auth/gmail.readonly",
+    "openid"
 ]
 
 # Replace with your OAuth 2.0 client ID file path
@@ -55,7 +58,12 @@ def register_routes(app):
             "client_secret": credentials.client_secret,
             "scopes": credentials.scopes,
         }
-        return "OAuth done"
+
+        id_token = credentials.id_token
+        id_info = verify_oauth2_token(id_token, requests.Request())
+        user_id = id_info.get('sub')
+
+        return f"OAuth done for {user_id}"
         #return redirect(url_for("llm_activate"))
 
     #@app.route('/users', methods=['POST'])
