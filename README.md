@@ -53,3 +53,13 @@
       how many are remaining
 - Once the background task completes, the page will show that information. To
   keep things simple, there will be no email sent at this time 
+
+## TODO
+
+- [ ] Remove all existing POC code (bootstrap, etc) and keep only bare minimum OAuth flow
+- [ ] Introduce dependencies - SQLite, Celery 
+- [ ] Get user ID from Gmail via oauth and store in DB
+- [ ] Store Open API Key in SQLite 
+- [ ] Create background job to get emails
+- [ ] Write status page
+- [ ] Wire in LLM logic (Rags)
