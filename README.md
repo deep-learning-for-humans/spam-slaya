@@ -2,8 +2,10 @@
 
 ## Notes
 
-- Storing access token, refresh token etc is a big security hassle. We will not
-  store anything and ask people to authenticate everytime.
+- ~~Storing access token, refresh token etc is a big security hassle. We will not
+  store anything and ask people to authenticate everytime.~~
+  - We cannot do this. We must store, because the background jobs will need it
+  - What we can do, is delete this once the job has finished processing
 - Once the open API key is entered, we will store that along with the google
   given user ID. We will not store the email of the customer also.
 - We can use celery to run the background tasks. Considering that this will be
@@ -27,7 +29,7 @@
   OAuth token has expired, we will not need to login again or do anything of
   that kind. Is this OK? 
 
-## Flow
+## UX Flow
 
 - User lands on site
 - User clicks on login with google button and finishes the oauth dance
@@ -54,9 +56,54 @@
 - Once the background task completes, the page will show that information. To
   keep things simple, there will be no email sent at this time 
 
+## Data
+
+### Users
+
+- ID `AUTO INC`
+- Open API Key
+- Gmail Credentials
+
+### Runs
+
+- ID `GUID`
+- User ID
+- Scheduled At
+- Started At
+- Ended At
+- Status
+  - `QUEUED`
+  - `PROCESSING`
+  - `DELETING`
+  - `DONE`
+- Processed Count
+
+### Run Batches
+
+- ID `AUTO INC`
+- Run ID `GUID`
+- Batch ID `GUID`
+- Message ID
+- Action
+
+## Process Flow
+
+- Once credentials are entered, we will fire a job `BatchScheduler` to start the process
+- `BatchScheduler` will get the messages by batch of 500 and for each batch:
+  - Create a new `Run Batch` and populate it with the message IDs
+  - Fire a new job `ProcessBatch`
+- `ProcessBatch` will pick up its batch, and process the messages one by one
+  - If it can be deleted, it will delete
+  - It will mark the action against the message's `Action` entry 
+
+### Concerns
+
+- Rate limit from Open API
+  - Handle this by exponential step back?
+
 ## TODO
 
-- [ ] Remove all existing POC code (bootstrap, etc) and keep only bare minimum OAuth flow
+- [X] Remove all existing POC code (bootstrap, etc) and keep only bare minimum OAuth flow
 - [ ] Introduce dependencies - SQLite, Celery 
 - [ ] Get user ID from Gmail via oauth and store in DB
 - [ ] Store Open API Key in SQLite 
