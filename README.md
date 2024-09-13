@@ -22,7 +22,6 @@
 
 ## Questions
 
-- Are we sending email after background job has processed? 
 - Once a background job is scheduled, the page that the user is redirected to,
   needs no authentication. This greatly simplifies our flow because even if the
   OAuth token has expired, we will not need to login again or do anything of
@@ -53,5 +52,4 @@
     - We should show information about how many emails have been processed and
       how many are remaining
 - Once the background task completes, the page will show that information. To
-  keep things simple, there will be no email sent at this time (can reconsider
-  this)
+  keep things simple, there will be no email sent at this time 
