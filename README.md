@@ -88,23 +88,19 @@
 
 ## Process Flow
 
-- Once credentials are entered, we will fire a job `BatchScheduler` to start the process
-- `BatchScheduler` will get the messages by batch of 500 and for each batch:
-  - Create a new `Run Batch` and populate it with the message IDs
-  - Fire a new job `ProcessBatch`
-- `ProcessBatch` will pick up its batch, and process the messages one by one
-  - If it can be deleted, it will delete
-  - It will mark the action against the message's `Action` entry 
+- Once credentials are entered, we will fire a job `ProcessEmails` to start the process
+- `ProcessEmails` will get a batch of 500 and:
+  - Write a new entry into `RunBatches` (so that in the future we can parallelize)
+  - Start reading one email by one and processing with the LLM
+  - If the email needs to be deleted, it will delete it
+  - Keep the `Processed Count` updated as it finishes one email by one
 
-### Concerns
-
-- Rate limit from Open API
-  - Handle this by exponential step back?
 
 ## TODO
 
 - [X] Remove all existing POC code (bootstrap, etc) and keep only bare minimum OAuth flow
-- [ ] Introduce dependencies - SQLite, Celery 
+- [X] Plan out data & process
+- [ ] Introduce dependencies - SQLite, SQLAlchemy, Celery 
 - [ ] Get user ID from Gmail via oauth and store in DB
 - [ ] Store Open API Key in SQLite 
 - [ ] Create background job to get emails
