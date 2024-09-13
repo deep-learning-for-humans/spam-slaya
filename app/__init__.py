@@ -16,7 +16,7 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
 
-    from .models import User
+    from .models import User, Run, RunBatch
 
     with app.app_context():
         db.create_all()
