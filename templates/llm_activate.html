@@ -1,33 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Your OpenAI Key</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .container {
-            max-width: 600px;
-            margin-top: 50px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="text-center mb-4">Enter Your OpenAI Key</h1>
-        <form action="/store-key" method="post">
-            <div class="form-group">
-                <label for="api-key">API Key</label>
-                <input type="text" class="form-control" id="api-key" name="api_key" placeholder="Enter your API key" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+{% extends 'base.html' %}
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+{% block title %}Activate your LLM{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Enter Your OpenAI Key</h1>
+    <form action="/store-key" method="post">
+        <div>
+            <label for="api-key">API Key</label>
+            <input type="text" id="api-key" name="api_key" placeholder="Enter your API key" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}

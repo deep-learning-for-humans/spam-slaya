@@ -32,13 +32,6 @@ def index():
     # return '<a href="/login">Login with Gmail</a>'
 
 
-@app.route("/test")
-def test():
-    resp = test_ai()
-
-    return resp.content
-
-
 @app.route("/login")
 def login():
     flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
@@ -125,8 +118,7 @@ def gmail_actions():
             }
         )
 
-    html = generate_actions_table(email_list)
-    return html
+    return "OK"
 
 
 if __name__ == "__main__":
