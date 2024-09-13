@@ -5,10 +5,10 @@
 {% block body %}
 <div>
     <h1>Enter Your OpenAI Key</h1>
-    <form action="/store-key" method="post">
+    <form method="post">
         <div>
             <label for="api-key">API Key</label>
-            <input type="text" id="api-key" name="api_key" placeholder="Enter your API key" required>
+            <input type="text" id="api-key" name="key" placeholder="Enter your API key" required>
         </div>
         <button type="submit">Submit</button>
     </form>

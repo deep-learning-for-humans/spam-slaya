@@ -1,15 +1,15 @@
 from flask import request, jsonify, render_template, url_for, session, redirect
 
-from google.oauth2.credentials import Credentials
 from google.oauth2.id_token import verify_oauth2_token
 from google.auth.transport import requests
 from google_auth_oauthlib.flow import Flow
-from googleapiclient.discovery import build
 
-from .models import User, db
+from . import db
+from .models import User
+
 #from .tasks.task_1 import long_running_task
 
-import os
+import os, json
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -22,6 +22,7 @@ SCOPES = [
 
 # Replace with your OAuth 2.0 client ID file path
 CLIENT_SECRETS_FILE = "client_secret.json"
+
 
 def register_routes(app):
     @app.route('/')
@@ -50,7 +51,8 @@ def register_routes(app):
         flow.fetch_token(authorization_response=authorization_response)
 
         credentials = flow.credentials
-        session["credentials"] = {
+
+        credential_parts = {
             "token": credentials.token,
             "refresh_token": credentials.refresh_token,
             "token_uri": credentials.token_uri,
@@ -63,8 +65,53 @@ def register_routes(app):
         id_info = verify_oauth2_token(id_token, requests.Request())
         user_id = id_info.get('sub')
 
-        return f"OAuth done for {user_id}"
-        #return redirect(url_for("llm_activate"))
+        session["user"] = user_id
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user:
+            new_user = User(
+                id=user_id,
+                gmail_credentials=json.dumps(credential_parts)
+            )
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            return redirect(url_for("activate_llm"))
+        else:
+            session["user"] = user_id
+            if not user.open_api_key:
+                return redirect(url_for("activate_llm"))
+            else:
+                return "All ready"
+
+    @app.route("/activate-llm", methods=["GET", "POST"])
+    def activate_llm():
+
+        user_id = session["user"]
+
+        if not user_id:
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user:
+            return redirect(url_for("login"))
+
+        if request.method == "GET":
+            if not user.open_api_key:
+                return render_template("activate-llm.html")
+            else:
+                return "OK"
+        elif request.method == "POST":
+            key = request.form["key"]
+
+            user.open_api_key = key
+            db.session.add(user)
+            db.session.commit()
+            return "OK. stored"
+            # handle key empty with flash
 
     #@app.route('/users', methods=['POST'])
     #def create_user():
@@ -80,15 +127,6 @@ def register_routes(app):
     #    result = long_running_task.delay(data['x'], data['y'])
     #    return jsonify({'task_id': result.id}), 202
 
-#@app.route("/llm-activate")
-#def llm_activate():
-#    with app.app_context():
-#        if not current_app.config["OPENAI_API_KEY"]:
-#            return render_template("llm_activate.html")
-#        else:
-#            return redirect(url_for("gmail_actions"))
-#
-#
 #@app.route("/store-key", methods=["POST"])
 #def handle_form_submission():
 #    # Get the API key from the form data

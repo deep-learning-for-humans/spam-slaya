@@ -19,7 +19,7 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(String, primary_key=True)
-    open_api_key = Column(String, nullable=False)
+    open_api_key = Column(String, nullable=True)
     gmail_credentials = Column(String, nullable=False)
 
     runs = relationship('Run', back_populates='user')
