@@ -151,33 +151,6 @@ def register_routes(app):
 
         return render_template("home.html", runs=runs)
 
-    #@app.route('/users', methods=['POST'])
-    #def create_user():
-    #    data = request.json
-    #    user = User(username=data['username'], email=data['email'])
-    #    db.session.add(user)
-    #    db.session.commit()
-    #    return jsonify({'message': 'User created successfully'}), 201
-
-    #@app.route('/run-task', methods=['POST'])
-    #def run_task():
-    #    data = request.json
-    #    result = long_running_task.delay(data['x'], data['y'])
-    #    return jsonify({'task_id': result.id}), 202
-
-#@app.route("/store-key", methods=["POST"])
-#def handle_form_submission():
-#    # Get the API key from the form data
-#    api_key = request.form.get("api_key")
-#    with app.app_context():
-#        current_app.config["OPENAI_API_KEY"] = api_key
-#        os.environ["OPENAI_API_KEY"] = api_key
-#
-#    print(os.environ["OPENAI_API_KEY"])
-#
-#    return redirect(url_for("gmail_actions"))
-#
-#
 #@app.route("/gmail_actions")
 #def gmail_actions():
 #    if "credentials" not in session:
