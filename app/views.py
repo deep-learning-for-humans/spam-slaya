@@ -7,12 +7,14 @@ from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
 from google_auth_oauthlib.flow import Flow
 
-from delorean import parse
+import redis
+from rq import Queue
 
 from . import db
 from .models import User
+from .config import Config
 
-# from .tasks.task_1 import long_running_task
+import tasks
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -26,10 +28,14 @@ SCOPES = [
 # Replace with your OAuth 2.0 client ID file path
 CLIENT_SECRETS_FILE = "client_secret.json"
 
+redis_conn = redis.from_url(Config.RQ_BROKER_URL)
+q = Queue(connection=redis_conn)
+
 
 def register_routes(app):
     @app.route('/')
     def index():
+        q.enqueue(tasks.printx)
         return render_template("index.html")
 
     @app.route("/login")
