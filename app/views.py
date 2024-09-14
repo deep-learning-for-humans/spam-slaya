@@ -95,7 +95,7 @@ def register_routes(app):
             if not user.open_api_key:
                 return redirect(url_for("activate_llm"))
             else:
-                return "All ready"
+                return redirect(url_for("home"))
 
     @app.route("/activate-llm", methods=["GET", "POST"])
     def activate_llm():
@@ -114,15 +114,32 @@ def register_routes(app):
             if not user.open_api_key:
                 return render_template("activate-llm.html")
             else:
-                return "OK"
+                redirect(url_for("home"))
         elif request.method == "POST":
             key = request.form["key"]
 
             user.open_api_key = key
             db.session.add(user)
             db.session.commit()
-            return "OK. stored"
+            return redirect(url_for("home"))
             # handle key empty with flash
+
+    @app.route("/home")
+    def home():
+        user_id = session["user"]
+
+        if not user_id:
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user or not user.open_api_key or not user.gmail_credentials:
+            # use flash here
+            return redirect(url_for("login"))
+
+        runs = user.runs
+
+        return render_template("home.html", runs=runs)
 
     #@app.route('/users', methods=['POST'])
     #def create_user():

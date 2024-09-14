@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+<form action="/schedule-run" method="POST">
+    <button type="submit">Schedule new run</button>
+</form>
+
+{% if runs %}
+<table>
+    <thead>
+        <tr>
+            <th>Scheduled at</th>
+            <th>Started at</th>
+            <th>Ended at</th>
+            <th>Status </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for run in runs %}
+        <tr>
+            <td>{{ run.scheduled_at }}</td>
+            <td>{{ run.started_at }}</td>
+            <td>{{ run.ended_at }}</td>
+            <td>{{ run.status }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
