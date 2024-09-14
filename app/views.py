@@ -129,12 +129,22 @@ def register_routes(app):
         user_id = session["user"]
 
         if not user_id:
+            print("no user_id. Redirecting to login")
             return redirect(url_for("login"))
 
         user = User.query.filter_by(id=user_id).first()
+        print(user)
 
         if not user or not user.open_api_key or not user.gmail_credentials:
             # use flash here
+            print("no user or no open api key or no gmail creds. Redirecting to login")
+            return redirect(url_for("login"))
+
+        print(datetime.datetime.utcnow(), user.gmail_credential_expiry)
+
+        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
+            # credentials have expired. Flash this
+            print("Credentials expired. Redirecting to login")
             return redirect(url_for("login"))
 
         runs = user.runs
