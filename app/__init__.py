@@ -5,7 +5,6 @@ from .config import Config
 # Initialize SQLAlchemy
 db = SQLAlchemy()
 
-from celery import Celery
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
