@@ -1,15 +1,18 @@
-from flask import request, jsonify, render_template, url_for, session, redirect
+import datetime
+import json
+import os
 
-from google.oauth2.id_token import verify_oauth2_token
+from flask import request, render_template, url_for, session, redirect
 from google.auth.transport import requests
+from google.oauth2.id_token import verify_oauth2_token
 from google_auth_oauthlib.flow import Flow
+
+from delorean import parse
 
 from . import db
 from .models import User
 
-#from .tasks.task_1 import long_running_task
-
-import os, json
+# from .tasks.task_1 import long_running_task
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -58,7 +61,7 @@ def register_routes(app):
             "token_uri": credentials.token_uri,
             "client_id": credentials.client_id,
             "client_secret": credentials.client_secret,
-            "scopes": credentials.scopes,
+            "scopes": credentials.scopes
         }
 
         id_token = credentials.id_token
@@ -72,7 +75,8 @@ def register_routes(app):
         if not user:
             new_user = User(
                 id=user_id,
-                gmail_credentials=json.dumps(credential_parts)
+                gmail_credentials=json.dumps(credential_parts),
+                gmail_credential_expiry=credentials.expiry
             )
 
             db.session.add(new_user)
@@ -80,7 +84,14 @@ def register_routes(app):
 
             return redirect(url_for("activate_llm"))
         else:
-            session["user"] = user_id
+            expiry = user.gmail_credential_expiry
+            if credentials.expiry > expiry:
+                user.gmail_credentials = json.dumps(credential_parts)
+                user.gmail_credential_expiry = credentials.expiry
+
+                db.session.add(user)
+                db.session.commit()
+
             if not user.open_api_key:
                 return redirect(url_for("activate_llm"))
             else:

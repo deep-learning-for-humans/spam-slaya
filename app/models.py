@@ -21,6 +21,7 @@ class User(db.Model):
     id = Column(String, primary_key=True)
     open_api_key = Column(String, nullable=True)
     gmail_credentials = Column(String, nullable=False)
+    gmail_credential_expiry = Column(DateTime, nullable=False)
 
     runs = relationship('Run', back_populates='user')
 
