@@ -35,7 +35,7 @@ q = Queue(connection=redis_conn)
 def register_routes(app):
     @app.route('/')
     def index():
-        user_id = session["user"]
+        user_id = session.get("user")
         if user_id:
             return redirect(url_for("home"))
 
@@ -109,7 +109,7 @@ def register_routes(app):
     @app.route("/activate-llm", methods=["GET", "POST"])
     def activate_llm():
 
-        user_id = session["user"]
+        user_id = session.get("user")
 
         if not user_id:
             return redirect(url_for("login"))
@@ -135,7 +135,7 @@ def register_routes(app):
 
     @app.route("/home")
     def home():
-        user_id = session["user"]
+        user_id = session.get("user")
 
         if not user_id:
             print("no user_id. Redirecting to login")
@@ -161,7 +161,7 @@ def register_routes(app):
 
     @app.route("/schedule-run", methods=["POST"])
     def schedule_run():
-        user_id = session["user"]
+        user_id = session.get("user")
 
         if not user_id:
             print("no user_id. Redirecting to login")
