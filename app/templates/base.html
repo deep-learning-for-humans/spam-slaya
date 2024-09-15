@@ -3,11 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Clean That Up!</title>
+    <style>
+        body {
+            font-family: monospace;
+        }
+
+        td {
+            padding: 5px;
+            border: 1px solid #2e2e2e;
+        }
+
+        th {
+            border: 1px solid #2e2e2e;
+        }
+
+        .flash {
+            background: papayawhip;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
     {% for message in get_flashed_messages() %}
         <div class="flash">{{ message }}</div>
     {% endfor %}
+
+    <br/>
 
     {% block body %}
     {% endblock %}
