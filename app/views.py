@@ -65,10 +65,6 @@ def register_routes(app):
 
         credentials = flow.credentials
 
-        print(f"Got credentials {credentials.to_json()} {credentials}")
-        print(f"refresh token {credentials.refresh_token}")
-        print(f"Ref token from json = {json.loads(credentials.to_json()).get("refresh_token", "NOT FOUND")}")
-
         id_token = credentials.id_token
         id_info = verify_oauth2_token(id_token, requests.Request(), clock_skew_in_seconds=5)
         user_id = id_info.get('sub')
