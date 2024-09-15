@@ -35,6 +35,10 @@ q = Queue(connection=redis_conn)
 def register_routes(app):
     @app.route('/')
     def index():
+        user_id = session["user"]
+        if user_id:
+            return redirect(url_for("home"))
+
         return render_template("index.html")
 
     @app.route("/login")
