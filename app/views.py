@@ -13,8 +13,8 @@ from rq import Queue
 from . import db
 from .models import User
 from .config import Config
+from .tasks import bg_schedule_run
 
-import tasks
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -35,7 +35,6 @@ q = Queue(connection=redis_conn)
 def register_routes(app):
     @app.route('/')
     def index():
-        q.enqueue(tasks.printx)
         return render_template("index.html")
 
     @app.route("/login")
@@ -139,7 +138,6 @@ def register_routes(app):
             return redirect(url_for("login"))
 
         user = User.query.filter_by(id=user_id).first()
-        print(user)
 
         if not user or not user.open_api_key or not user.gmail_credentials:
             # use flash here
@@ -156,6 +154,33 @@ def register_routes(app):
         runs = user.runs
 
         return render_template("home.html", runs=runs)
+
+    @app.route("/schedule-run", methods=["POST"])
+    def schedule_run():
+        user_id = session["user"]
+
+        if not user_id:
+            print("no user_id. Redirecting to login")
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user or not user.open_api_key or not user.gmail_credentials:
+            # use flash here
+            print("no user or no open api key or no gmail creds. Redirecting to login")
+            return redirect(url_for("login"))
+
+        print(datetime.datetime.utcnow(), user.gmail_credential_expiry)
+
+        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
+            # credentials have expired. Flash this
+            print("Credentials expired. Redirecting to login")
+            return redirect(url_for("login"))
+
+        q.enqueue(bg_schedule_run, user_id)
+        # schedule run here
+        return "ok"
+
 
 #@app.route("/gmail_actions")
 #def gmail_actions():

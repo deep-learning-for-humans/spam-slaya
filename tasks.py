@@ -1,2 +1,0 @@
-def printx():
-    print("hello")
