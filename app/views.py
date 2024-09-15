@@ -13,7 +13,7 @@ from rq import Queue
 from . import db
 from .models import User
 from .config import Config
-from .tasks import bg_schedule_run
+from .tasks import schedule_bg_run
 
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -74,7 +74,7 @@ def register_routes(app):
         }
 
         id_token = credentials.id_token
-        id_info = verify_oauth2_token(id_token, requests.Request())
+        id_info = verify_oauth2_token(id_token, requests.Request(), clock_skew_in_seconds=5)
         user_id = id_info.get('sub')
 
         session["user"] = user_id
@@ -181,9 +181,8 @@ def register_routes(app):
             print("Credentials expired. Redirecting to login")
             return redirect(url_for("login"))
 
-        q.enqueue(bg_schedule_run, user_id)
-        # schedule run here
-        return "ok"
+        run = schedule_bg_run(user_id)
+        return f"ok. ID: {run.id}. Scheduled at: {run.scheduled_at}"
 
 
 #@app.route("/gmail_actions")
