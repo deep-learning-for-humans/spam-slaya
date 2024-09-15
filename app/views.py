@@ -11,7 +11,7 @@ import redis
 from rq import Queue
 
 from . import db
-from .models import User
+from .models import User, Run
 from .config import Config
 from .tasks import schedule_bg_run
 
@@ -147,7 +147,7 @@ def register_routes(app):
             print("Credentials expired. Redirecting to login")
             return redirect(url_for("login"))
 
-        runs = user.runs
+        runs = Run.query.filter_by(user_id = user_id).order_by(Run.scheduled_at.desc())
 
         return render_template("home.html", runs=runs)
 
