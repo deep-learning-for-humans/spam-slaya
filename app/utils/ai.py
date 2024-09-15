@@ -27,9 +27,9 @@ class MailAction(BaseModel):
     score: float
 
 
-def infer_email_type(user_msg):
+def infer_email_type(api_key, user_msg):
     client = instructor.from_openai(
-        OpenAI(),
+        OpenAI(api_key=api_key),
         mode=instructor.Mode.JSON,
     )
 
