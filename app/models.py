@@ -30,7 +30,7 @@ class Run(db.Model):
     __tablename__ = 'runs'
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    user_id = Column(String, ForeignKey('users.id'), nullable=False)
     scheduled_at = Column(DateTime, default=datetime.utcnow)
     started_at = Column(DateTime, nullable=True)
     ended_at = Column(DateTime, nullable=True)
