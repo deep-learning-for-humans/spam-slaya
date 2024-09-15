@@ -46,7 +46,8 @@ def register_routes(app):
         flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
         flow.redirect_uri = url_for("oauth2callback", _external=True)
         authorization_url, state = flow.authorization_url(
-            access_type="offline", include_granted_scopes="true"
+            access_type="offline", include_granted_scopes="true",
+            approval_prompt="force"
         )
         session["state"] = state
         return redirect(authorization_url)
@@ -64,14 +65,9 @@ def register_routes(app):
 
         credentials = flow.credentials
 
-        credential_parts = {
-            "token": credentials.token,
-            "refresh_token": credentials.refresh_token,
-            "token_uri": credentials.token_uri,
-            "client_id": credentials.client_id,
-            "client_secret": credentials.client_secret,
-            "scopes": credentials.scopes
-        }
+        print(f"Got credentials {credentials.to_json()} {credentials}")
+        print(f"refresh token {credentials.refresh_token}")
+        print(f"Ref token from json = {json.loads(credentials.to_json()).get("refresh_token", "NOT FOUND")}")
 
         id_token = credentials.id_token
         id_info = verify_oauth2_token(id_token, requests.Request(), clock_skew_in_seconds=5)
@@ -84,7 +80,7 @@ def register_routes(app):
         if not user:
             new_user = User(
                 id=user_id,
-                gmail_credentials=json.dumps(credential_parts),
+                gmail_credentials=credentials.to_json(),
                 gmail_credential_expiry=credentials.expiry
             )
 
@@ -95,7 +91,7 @@ def register_routes(app):
         else:
             expiry = user.gmail_credential_expiry
             if credentials.expiry > expiry:
-                user.gmail_credentials = json.dumps(credential_parts)
+                user.gmail_credentials = credentials.to_json()
                 user.gmail_credential_expiry = credentials.expiry
 
                 db.session.add(user)
