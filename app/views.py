@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 
-from flask import request, render_template, url_for, session, redirect
+from flask import request, render_template, url_for, session, redirect, flash
 from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
 from google_auth_oauthlib.flow import Flow
@@ -174,7 +174,9 @@ def register_routes(app):
             return redirect(url_for("login"))
 
         run = schedule_bg_run(user_id)
-        return f"ok. ID: {run.id}. Scheduled at: {run.scheduled_at}"
+        flash("Your run has been queued for processing")
+
+        return redirect(url_for("home"))
 
 
 #@app.route("/gmail_actions")
