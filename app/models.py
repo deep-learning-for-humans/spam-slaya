@@ -15,6 +15,12 @@ class RunStatusEnum(enum.Enum):
     DONE = "DONE"
 
 
+class MessageActionEnum(enum.Enum):
+    TBD = "TBD"
+    KEEP = "KEEP"
+    DELETE = "DELETE"
+
+
 class User(db.Model):
     __tablename__ = 'users'
 
@@ -48,6 +54,6 @@ class RunBatch(db.Model):
     run_id = Column(UUID(as_uuid=True), ForeignKey('runs.id'), nullable=False)
     batch_id = Column(UUID(as_uuid=True), default=uuid.uuid4)
     message_id = Column(String, nullable=False)
-    action = Column(String, nullable=False)
+    action = Column(Enum(MessageActionEnum), nullable=False, default=MessageActionEnum.TBD)
 
     run = relationship('Run', back_populates='batches')
