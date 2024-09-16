@@ -91,6 +91,7 @@ def bg_process_run(run_id):
 
         messages_to_process = RunBatch.query.filter_by(batch_id = batch_id)
 
+        has_error = False
         message_count = messages_to_process.count()
         for index, message in enumerate(messages_to_process, start=1):
 
@@ -108,13 +109,18 @@ def bg_process_run(run_id):
 
                 message.action = MessageActionEnum[ai_inference.action]
 
-                db.session.add(message)
-                db.session.commit()
             except Exception as ex:
                 print(f"Exception: When processing message {message.message_id} with message {ex}")
 
+                has_error = True
+                message.action = MessageActionEnum.UNPROCESSED
+                message.errors = repr(ex)
+
+            db.session.add(message)
+            db.session.commit()
+
         run.ended_at = datetime.datetime.utcnow()
-        run.status = RunStatusEnum.DONE
+        run.status = RunStatusEnum.DONE_WITH_ERRORS if has_error else RunStatusEnum.DONE
 
         db.session.add(run)
         db.session.commit()

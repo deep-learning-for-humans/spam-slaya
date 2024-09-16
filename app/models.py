@@ -13,12 +13,14 @@ class RunStatusEnum(enum.Enum):
     PROCESSING = "PROCESSING"
     DELETING = "DELETING"
     DONE = "DONE"
+    DONE_WITH_ERRORS = "DONE WITH ERRORS"
 
 
 class MessageActionEnum(enum.Enum):
     TBD = "TBD"
     KEEP = "KEEP"
     DELETE = "DELETE"
+    UNPROCESSED = "UNPROCESSED"
 
 
 class User(db.Model):
@@ -55,5 +57,6 @@ class RunBatch(db.Model):
     batch_id = Column(UUID(as_uuid=True), default=uuid.uuid4)
     message_id = Column(String, nullable=False)
     action = Column(Enum(MessageActionEnum), nullable=False, default=MessageActionEnum.TBD)
+    errors = Column(String, nullable=True)
 
     run = relationship('Run', back_populates='batches')
