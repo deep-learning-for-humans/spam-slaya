@@ -1,3 +1,4 @@
+import uuid
 import datetime
 import json
 
@@ -9,7 +10,7 @@ from googleapiclient.discovery import build
 
 from . import db
 from . import create_app
-from .models import User, Run, RunBatch, RunStatusEnum
+from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
 from .utils import email, ai
 
@@ -72,26 +73,45 @@ def bg_process_run(run_id):
         credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
         service = build("gmail", "v1", credentials=credentials)
 
-        results = service.users().messages().list(userId="me", maxResults=5).execute()
+        results = service.users().messages().list(userId="me", maxResults=10).execute()
         messages = results.get("messages", [])
 
         print(f"Got {len(messages)} messages to process")
 
-        message_count = len(messages)
-        i=0
+        batch_id = uuid.uuid4()
         for message in messages:
+            batch = RunBatch(
+                run_id = run_id,
+                batch_id = batch_id,
+                message_id = message["id"],
+            )
+            db.session.add(batch)
 
-            i+=1
-            print(f"Processing message {i} of {message_count}")
+        db.session.commit()
 
-            msg_raw = service.users().messages().get(userId="me", id=message["id"], format="raw").execute()
+        messages_to_process = RunBatch.query.filter_by(batch_id = batch_id)
 
-            body = email.get_email_body(msg_raw["raw"])
-            subject = email.get_email_subject(msg_raw["raw"])
+        message_count = messages_to_process.count()
+        for index, message in enumerate(messages_to_process, start=1):
 
-            del_action = ai.infer_email_type(user.open_api_key, body)
+            print(f"Processing message {index} of {message_count}")
 
-            print(f"Message {subject} Action: {del_action}")
+            msg_raw = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
+
+            try:
+                body = email.get_email_body(msg_raw["raw"])
+                subject = email.get_email_subject(msg_raw["raw"])
+
+                ai_inference = ai.infer_email_type(user.open_api_key, body)
+
+                print(f"Message {subject} Inference: {ai_inference}")
+
+                message.action = MessageActionEnum[ai_inference.action]
+
+                db.session.add(message)
+                db.session.commit()
+            except Exception as ex:
+                print(f"Exception: When processing message {message.message_id} with message {ex}")
 
         run.ended_at = datetime.datetime.utcnow()
         run.status = RunStatusEnum.DONE
