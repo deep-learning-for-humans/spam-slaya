@@ -100,9 +100,9 @@
 
 - [X] Remove all existing POC code (bootstrap, etc) and keep only bare minimum OAuth flow
 - [X] Plan out data & process
-- [ ] Introduce dependencies - SQLite, SQLAlchemy, Celery 
-- [ ] Get user ID from Gmail via oauth and store in DB
-- [ ] Store Open API Key in SQLite 
-- [ ] Create background job to get emails
+- [X] Introduce dependencies - SQLite, SQLAlchemy, Celery 
+- [X] Get user ID from Gmail via oauth and store in DB
+- [X] Store Open API Key in SQLite 
+- [X] Create background job to get emails
 - [ ] Write status page
 - [ ] Wire in LLM logic (Rags)
