@@ -56,6 +56,7 @@ class RunBatch(db.Model):
     run_id = Column(UUID(as_uuid=True), ForeignKey('runs.id'), nullable=False)
     batch_id = Column(UUID(as_uuid=True), default=uuid.uuid4)
     message_id = Column(String, nullable=False)
+    #todo introduce subject here (for easy identification)
     action = Column(Enum(MessageActionEnum), nullable=False, default=MessageActionEnum.TBD)
     errors = Column(String, nullable=True)
 

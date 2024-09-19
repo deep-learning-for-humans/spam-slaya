@@ -51,7 +51,7 @@ def schedule_bg_run(user_id):
 
 def bg_process_run(run_id):
 
-    print(f"Running job {run_id} in backgroun")
+    print(f"Running job {run_id} in background")
 
     app = create_app()
     with app.app_context():

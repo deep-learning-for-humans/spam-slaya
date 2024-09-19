@@ -166,8 +166,6 @@ def register_routes(app):
             print("no user or no open api key or no gmail creds. Redirecting to login")
             return redirect(url_for("login"))
 
-        print(datetime.datetime.utcnow(), user.gmail_credential_expiry)
-
         if datetime.datetime.utcnow() > user.gmail_credential_expiry:
             # credentials have expired. Flash this
             print("Credentials expired. Redirecting to login")
