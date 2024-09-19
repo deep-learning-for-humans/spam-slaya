@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Run Status{% endblock %}
+
+{% block meta %}
+<meta http-equiv="refresh" content="5" >
+{% endblock %}
+
+{% block body %}
+
+<table>
+    <thead>
+        <tr>
+            <th>Scheduled at</th>
+            <th>Started at</th>
+            <th>Ended at</th>
+            <th>Status </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ model.run.scheduled_at }}</td>
+            <td>{{ model.run.started_at }}</td>
+            <td>{{ model.run.ended_at }}</td>
+            <td>{{ model.run.status }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Messages to process</th>
+            <td>{{ model.count }}</td>
+        </tr>
+        <tr>
+            <th>Messages processed</th>
+            <td>{{ model.process_count }}</td>
+        </tr>
+        <tr>
+            <th>Messages with error (unprocessed)</th>
+            <td>{{ model.error_count }}</td>
+        </tr>
+        <tr>
+            <th>Messages to delete</th>
+            <td>{{ model.delete_count }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    This page auto refreshes in 5 seconds
+</p>
+
+{% endblock %}

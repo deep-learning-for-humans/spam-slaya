@@ -1,8 +1,9 @@
+import uuid
 import datetime
 import json
 import os
 
-from flask import request, render_template, url_for, session, redirect, flash
+from flask import request, render_template, url_for, session, redirect, flash, abort
 from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
 from google_auth_oauthlib.flow import Flow
@@ -11,7 +12,7 @@ import redis
 from rq import Queue
 
 from . import db
-from .models import User, Run
+from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
 from .tasks import schedule_bg_run
 
@@ -175,6 +176,62 @@ def register_routes(app):
         flash("Your run has been queued for processing")
 
         return redirect(url_for("home"))
+
+    @app.route("/run-status/<run_id>", methods=["GET"])
+    def run_status(run_id):
+        user_id = session.get("user")
+
+        if not user_id:
+            print("no user_id. Redirecting to login")
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user or not user.open_api_key or not user.gmail_credentials:
+            # use flash here
+            print("no user or no open api key or no gmail creds. Redirecting to login")
+            return redirect(url_for("login"))
+
+        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
+            # credentials have expired. Flash this
+            print("Credentials expired. Redirecting to login")
+            return redirect(url_for("login"))
+
+        run = Run.query.get(uuid.UUID(run_id))
+        if not run:
+            return abort(404)
+
+        run_batches = RunBatch.query.filter_by(run_id = run.id)
+
+        message_count = run_batches.count()
+
+        message_process_count = RunBatch.query.filter(
+            RunBatch.run_id == run.id,
+            RunBatch.action != MessageActionEnum.TBD
+            ).count()
+
+        message_error_count = RunBatch.query.filter(
+            RunBatch.run_id == run.id,
+            RunBatch.action == MessageActionEnum.UNPROCESSED
+            ).count()
+
+        message_delete_count = RunBatch.query.filter(
+            RunBatch.run_id == run.id,
+            RunBatch.action == MessageActionEnum.DELETE
+            ).count()
+
+        return render_template("run_status.html", model = {
+            "run": run,
+            "count": message_count,
+            "process_count": message_process_count,
+            "error_count": message_error_count,
+            "delete_count": message_delete_count
+        })
+
+        
+        
+
+
 
 
 #@app.route("/gmail_actions")

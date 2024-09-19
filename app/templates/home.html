@@ -27,6 +27,7 @@
             <td>{{ run.started_at }}</td>
             <td>{{ run.ended_at }}</td>
             <td>{{ run.status }}</td>
+            <td><a href="{{ url_for('run_status', run_id = run.id) }}">Status</a></td>
         </tr>
     {% endfor %}
     </tbody>
