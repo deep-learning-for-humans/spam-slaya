@@ -73,29 +73,64 @@ def bg_process_run(run_id):
         credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
         service = build("gmail", "v1", credentials=credentials)
 
-        results = service.users().messages().list(userId="me", maxResults=10).execute()
+        BATCH_SIZE = 2
+
+        results = service.users().messages().list(userId="me", maxResults=BATCH_SIZE).execute()
         messages = results.get("messages", [])
 
-        print(f"Got {len(messages)} messages to process")
+        count = 1
 
-        batch_id = uuid.uuid4()
-        for message in messages:
-            batch = RunBatch(
-                run_id = run_id,
-                batch_id = batch_id,
-                message_id = message["id"],
-            )
-            db.session.add(batch)
+        while len(messages) > 0:
 
+            #todo remove this
+            if count == 3:
+                print("breaking")
+                break
+
+            print(f"Got {len(messages)} messages to process")
+
+            batch_id = uuid.uuid4()
+            for message in messages:
+                batch = RunBatch(
+                    run_id = run_id,
+                    batch_id = batch_id,
+                    message_id = message["id"],
+                )
+                db.session.add(batch)
+
+            db.session.commit()
+
+            process_batch(credentials, batch_id, user.open_api_key)
+
+            page_token = results.get("nextPageToken", None)
+            if page_token:
+                results = service.users().messages().list(userId="me", maxResults=BATCH_SIZE).execute()
+                messages = results.get("messages", [])
+
+            count += 1
+
+        batch_has_errors = RunBatch.query.filter(
+            RunBatch.run_id == run.id,
+            RunBatch.action == MessageActionEnum.UNPROCESSED
+        ).count() > 0
+
+        run.ended_at = datetime.datetime.utcnow()
+        run.status = RunStatusEnum.DONE_WITH_ERRORS if batch_has_errors else RunStatusEnum.DONE
+
+        db.session.add(run)
         db.session.commit()
+
+
+def process_batch(credentials, batch_id, open_api_key):
+
+        service = build("gmail", "v1", credentials=credentials)
 
         messages_to_process = RunBatch.query.filter_by(batch_id = batch_id)
 
-        has_error = False
         message_count = messages_to_process.count()
         for index, message in enumerate(messages_to_process, start=1):
 
-            print(f"Processing message {index} of {message_count}")
+            print(f"[{batch_id}] Processing message {index} of {message_count}")
 
             msg_raw = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
 
@@ -103,7 +138,7 @@ def bg_process_run(run_id):
                 body = email.get_email_body(msg_raw["raw"])
                 subject = email.get_email_subject(msg_raw["raw"])
 
-                ai_inference = ai.infer_email_type(user.open_api_key, body)
+                ai_inference = ai.infer_email_type(open_api_key, body)
 
                 print(f"Message {subject} Inference: {ai_inference}")
 
@@ -112,15 +147,9 @@ def bg_process_run(run_id):
             except Exception as ex:
                 print(f"Exception: When processing message {message.message_id} with message {ex}")
 
-                has_error = True
                 message.action = MessageActionEnum.UNPROCESSED
                 message.errors = repr(ex)
 
             db.session.add(message)
             db.session.commit()
 
-        run.ended_at = datetime.datetime.utcnow()
-        run.status = RunStatusEnum.DONE_WITH_ERRORS if has_error else RunStatusEnum.DONE
-
-        db.session.add(run)
-        db.session.commit()
