@@ -8,48 +8,67 @@
 
 {% block body %}
 
-<table>
-    <thead>
-        <tr>
-            <th>Scheduled at</th>
-            <th>Started at</th>
-            <th>Ended at</th>
-            <th>Status </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>{{ model.run.scheduled_at }}</td>
-            <td>{{ model.run.started_at }}</td>
-            <td>{{ model.run.ended_at }}</td>
-            <td>{{ model.run.status }}</td>
-        </tr>
-    </tbody>
-</table>
+<div class="row">
+    <div class="col-6 offset-3 bg-white shadow-sm p-4">
+        <h1>Run status</h1>
+        <pre>{{ model.run.id }}</pre>
+        <table class="table table-hover">
+            <tbody>
+                <tr>
+                    <th>Scheduled at</th>
+                    <td>{{ model.run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                </tr>
+                <tr>
+                    <th>Started at</th>
+                    <td>{{ model.run.started_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                </tr>
+                <tr>
+                    <th>Ended at</th>
+                    <td>{{ model.run.ended_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td>{{ model.run.status.value }}</td>
+                </tr>
+                <tr>
+                    <th>Messages to process</th>
+                    <td>{{ model.count }}</td>
+                </tr>
+                <tr>
+                    <th>Messages processed</th>
+                    <td>{{ model.process_count }}</td>
+                </tr>
+                <tr>
+                    <th>Messages with error (unprocessed)</th>
+                    <td>{{ model.error_count }}</td>
+                </tr>
+                <tr>
+                    <th>Messages to delete</th>
+                    <td>{{ model.delete_count }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-<table>
-    <tbody>
-        <tr>
-            <th>Messages to process</th>
-            <td>{{ model.count }}</td>
-        </tr>
-        <tr>
-            <th>Messages processed</th>
-            <td>{{ model.process_count }}</td>
-        </tr>
-        <tr>
-            <th>Messages with error (unprocessed)</th>
-            <td>{{ model.error_count }}</td>
-        </tr>
-        <tr>
-            <th>Messages to delete</th>
-            <td>{{ model.delete_count }}</td>
-        </tr>
-    </tbody>
-</table>
+        <div class="alert alert-info" role="alert">
+            This page auto refreshes in <span id="seconds-left"></span> seconds
+        </div>
+    </div>
+</div>
 
-<p>
-    This page auto refreshes in 5 seconds
-</p>
+{% endblock %}
 
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    $(function(){
+        $("#seconds-left").text(5);
+
+        setInterval(() => {
+            const secondsLeft = parseInt($("#seconds-left").text());
+            if (secondsLeft > 0) {
+                $("#seconds-left").text(secondsLeft - 1);
+            }
+        }, 1000);
+    })
+</script>
 {% endblock %}
