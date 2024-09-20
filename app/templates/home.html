@@ -4,34 +4,41 @@
 
 {% block body %}
 
-<form action="/schedule-run" method="POST">
-    <button type="submit">Schedule new run</button>
-</form>
+<div class="row">
+    <div class="col-8 offset-2 bg-white shadow-sm">
+        <div class="p-4">
+            <div class="text-end mb-3">
+                <form action="/schedule-run" method="POST">
+                    <button class="btn btn-sm px-4 btn-primary" type="submit"><i class="bi-file-earmark-plus"></i> Schedule new run</button>
+                </form>
+            </div>
 
-<br/>
-
-{% if runs %}
-<table>
-    <thead>
-        <tr>
-            <th>Scheduled at</th>
-            <th>Started at</th>
-            <th>Ended at</th>
-            <th>Status </th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for run in runs %}
-        <tr>
-            <td>{{ run.scheduled_at }}</td>
-            <td>{{ run.started_at }}</td>
-            <td>{{ run.ended_at }}</td>
-            <td>{{ run.status }}</td>
-            <td><a href="{{ url_for('run_status', run_id = run.id) }}">Status</a></td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            {% if runs %}
+            <table class="table table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th>Scheduled at</th>
+                        <th>Started at</th>
+                        <th>Ended at</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for run in runs %}
+                    <tr>
+                        <td class="align-middle">{{ run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                        <td class="align-middle">{{ run.started_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                        <td class="align-middle">{{ run.ended_at.strftime("%Y-%m-%d %H:%M:%S")}}</td>
+                        <td class="align-middle">{{ run.status.value }}</td>
+                        <td class="align-middle"><a href="{{ url_for('run_status', run_id = run.id) }}">Status</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endif %}
 
 {% endblock %}
