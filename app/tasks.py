@@ -1,3 +1,4 @@
+import traceback
 import uuid
 import datetime
 import json
@@ -166,6 +167,7 @@ def process_batch(credentials, batch_id, open_api_key):
 
         messages = RunBatch.query.filter_by(batch_id = batch_id)
         message_count = messages.count()
+        msgs_to_delete = []
 
         for index, message in enumerate(messages, start=1):
 
@@ -184,12 +186,34 @@ def process_batch(credentials, batch_id, open_api_key):
                 message.subject = subject
                 message.action = MessageActionEnum[ai_inference.action]
 
+                if ai_inference.action.upper() == "DELETE":
+                    msgs_to_delete.append(message.message_id)
+
             except Exception as ex:
                 print(f"Exception: When processing message {message.message_id} with message {ex}")
+                print(traceback.format_exc())
 
                 message.action = MessageActionEnum.UNPROCESSED
                 message.errors = repr(ex)
 
             db.session.add(message)
             db.session.commit()
+
+        print(msgs_to_delete)
+        if len(msgs_to_delete) > 0:
+            try:
+                body = {
+                    "ids": msgs_to_delete,
+                    "addLabelIds": ["TRASH"]
+                }
+                delete_resp = service.users().messages().batchModify(userId="me", body=body).execute()
+                print("Batch delete success")
+                print(delete_resp)
+
+            except Exception as ex:
+                print("Error while batch deleting")
+                print(traceback.format_exc())
+
+
+
 
