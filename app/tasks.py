@@ -104,7 +104,7 @@ def bg_process_run(run_id):
 
             page_token = results.get("nextPageToken", None)
             if page_token:
-                results = service.users().messages().list(userId="me", maxResults=BATCH_SIZE).execute()
+                results = service.users().messages().list(userId="me", maxResults=BATCH_SIZE, pageToken = page_token).execute()
                 messages = results.get("messages", [])
 
             count += 1
