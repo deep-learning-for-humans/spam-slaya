@@ -13,9 +13,13 @@
 <body class="bg-light">
 
     <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-        {% endfor %}
+        <div class="row">
+            <div class="col-6 offset-3">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-info">{{ message }}</div>
+                {% endfor %}
+            </div>
+        </div>
 
         <br/>
 
