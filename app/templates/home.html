@@ -34,9 +34,15 @@
                 <tbody>
                 {% for run in runs %}
                     <tr>
-                        <td class="align-middle">{{ run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                        <td class="align-middle">{{ run.started_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                        <td class="align-middle">{{ run.ended_at.strftime("%Y-%m-%d %H:%M:%S")}}</td>
+                        <td class="align-middle">
+                            {{ run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                        </td>
+                        <td class="align-middle">
+                            {{ run.started_at.strftime("%Y-%m-%d %H:%M:%S") if run.started_at }}
+                        </td>
+                        <td class="align-middle">
+                            {{ run.ended_at.strftime("%Y-%m-%d %H:%M:%S") if run.ended_at }}
+                        </td>
                         <td class="align-middle">{{ run.status.value }}</td>
                         <td class="align-middle"><a href="{{ url_for('run_status', run_id = run.id) }}">Status</a></td>
                     </tr>
