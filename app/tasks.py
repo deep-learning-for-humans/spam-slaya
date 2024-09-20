@@ -12,7 +12,7 @@ from . import db
 from . import create_app
 from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
-from .utils import email, ai
+from .utils import email as email_utils, ai as ai_utils
 
 redis_conn = redis.from_url(Config.RQ_BROKER_URL)
 q = Queue(connection=redis_conn)
@@ -125,20 +125,20 @@ def process_batch(credentials, batch_id, open_api_key):
 
         service = build("gmail", "v1", credentials=credentials)
 
-        messages_to_process = RunBatch.query.filter_by(batch_id = batch_id)
+        messages = RunBatch.query.filter_by(batch_id = batch_id)
 
-        message_count = messages_to_process.count()
-        for index, message in enumerate(messages_to_process, start=1):
+        message_count = messages.count()
+        for index, message in enumerate(messages, start=1):
 
             print(f"[{batch_id}] Processing message {index} of {message_count}")
 
-            msg_raw = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
+            email = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
 
             try:
-                body = email.get_email_body(msg_raw["raw"])
-                subject = email.get_email_subject(msg_raw["raw"])
+                body = email_utils.get_email_body(email["raw"])
+                subject = email_utils.get_email_subject(email["raw"])
 
-                ai_inference = ai.infer_email_type(open_api_key, body)
+                ai_inference = ai_utils.infer_email_type(open_api_key, body)
 
                 print(f"Message {subject} Inference: {ai_inference}")
 
