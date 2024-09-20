@@ -17,6 +17,14 @@ from .utils import email as email_utils, ai as ai_utils
 redis_conn = redis.from_url(Config.RQ_BROKER_URL)
 q = Queue(connection=redis_conn)
 
+"""
+Does the due diligence and creates a Run object. Then enqueues a job to run in
+the background (via RQ) with the run ID. 
+
+Note: This can be done in the same bg_process_run function but because the
+amount of credentials we have to check is quite high, thought it best to create
+an abstraction here.
+"""
 def schedule_bg_run(user_id):
     print(f"scheduling run for {user_id}")
 
@@ -49,6 +57,25 @@ def schedule_bg_run(user_id):
 
     return new_run
 
+"""
+This is where the run begins processing. It will first set the relevant details
+for audit (started at, status, etc) and then build the required objects from the
+DB to call the Gmail APIs.
+
+Then it gets a batch of emails from Gmail (the max here is 500). When it gets
+this, it will add it to a RunBatch. A RunBatch is owned by a Run and is used to
+split up processing. The idea is that if there are 1000 emails, then it can run
+as 2 parallel jobs of 500 per batch. At this point however, because of rate
+limit concerns, we are not choosing to run these are parallel jobs.
+
+So once the $batch of emails is got from Gmail, it is added to a new RunBatch
+and processed. This is done in the process_batch method. The idea is that in the
+future, this process_batch can just be run in the background and with a few more
+changes, the entire set of batches can run in parallel.
+
+Once all the batches have finished processing, based on the error count, the Run
+object is finalized with the required details
+"""
 def bg_process_run(run_id):
 
     print(f"Running job {run_id} in background")
@@ -121,13 +148,25 @@ def bg_process_run(run_id):
         db.session.commit()
 
 
+"""
+This is where the email is actually processed with calls to Open AI. The batch
+that is created in the bg_process_run method is processed here by taking emails
+one by one from the batch. Because of the complexity in properly getting the
+email body, we are getting the RAW email first and then using the stdlib email
+module to extract the information that we need. This is then sent on to the AI
+which decides if the email needs to be deleted or not. And if it needs to be, it
+queues it up to be trashed. The trashing is done via a batch operation after
+that particular RunBatch is completed.
+
+As it processes each email, it writes the results to that row in the RunBatch. 
+"""
 def process_batch(credentials, batch_id, open_api_key):
 
         service = build("gmail", "v1", credentials=credentials)
 
         messages = RunBatch.query.filter_by(batch_id = batch_id)
-
         message_count = messages.count()
+
         for index, message in enumerate(messages, start=1):
 
             print(f"[{batch_id}] Processing message {index} of {message_count}")
