@@ -7,10 +7,17 @@
 <div class="row">
     <div class="col-8 offset-2 bg-white shadow-sm">
         <div class="p-4">
+            <div class="row">
+                <div class="col-6">
+                    <h1>Home</h1>
+                </div>
+                <div class="col-6 text-end align-self-center">
+                    <form action="/schedule-run" method="POST">
+                        <button class="btn px-4 btn-primary" type="submit"><i class="bi-file-earmark-plus"></i> Schedule new run</button>
+                    </form>
+                </div>
+            </div>
             <div class="text-end mb-3">
-                <form action="/schedule-run" method="POST">
-                    <button class="btn btn-sm px-4 btn-primary" type="submit"><i class="bi-file-earmark-plus"></i> Schedule new run</button>
-                </form>
             </div>
 
             {% if runs %}
