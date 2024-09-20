@@ -142,6 +142,7 @@ def process_batch(credentials, batch_id, open_api_key):
 
                 print(f"Message {subject} Inference: {ai_inference}")
 
+                message.subject = subject
                 message.action = MessageActionEnum[ai_inference.action]
 
             except Exception as ex:
