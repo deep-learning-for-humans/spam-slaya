@@ -12,7 +12,7 @@
 </head>
 <body class="bg-light">
 
-    <div class="container bg-white mt-5 shadow-sm">
+    <div class="container">
         {% for message in get_flashed_messages() %}
             <div class="flash">{{ message }}</div>
         {% endfor %}
