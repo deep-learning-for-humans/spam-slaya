@@ -199,7 +199,7 @@ def process_batch(credentials, batch_id, open_api_key):
             db.session.add(message)
             db.session.commit()
 
-        print(msgs_to_delete)
+        print(f"Deleting messages: {msgs_to_delete}")
         if len(msgs_to_delete) > 0:
             try:
                 body = {
