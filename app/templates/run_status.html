@@ -16,77 +16,85 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-3 bg-white shadow-sm p-4">
-        <h1>Run status</h1>
-        <table class="table table-hover">
-            <tbody>
-                <tr>
-                    <th width="11">Scheduled</th>
-                    <td>{{ model.run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                </tr>
-                <tr>
-                    <th>Started</th>
-                    <td>{{ model.run.started_at.strftime("%Y-%m-%d %H:%M:%S") if model.run.started_at }}</td>
-                </tr>
-                <tr>
-                    <th>Ended</th>
-                    <td>{{ model.run.ended_at.strftime("%Y-%m-%d %H:%M:%S") if model.run.ended_at }}</td>
-                </tr>
-                <tr>
-                    <th>Status</th>
-                    <td>{{ model.run.status.value }}</td>
-                </tr>
-                <!--
-                <tr>
-                    <th>Messages to process</th>
-                    <td>{{ model.count }}</td>
-                </tr>
-                <tr>
-                    <th>Messages processed</th>
-                    <td>{{ model.process_count }}</td>
-                </tr>
-                <tr>
-                    <th>Messages with error (unprocessed)</th>
-                    <td>{{ model.error_count }}</td>
-                </tr>
-                <tr>
-                    <th>Messages to delete</th>
-                    <td>{{ model.delete_count }}</td>
-                </tr>
-                -->
-            </tbody>
-        </table>
+    <div class="col-3">
+        <div class="card border border-0 shadow-sm">
+            <div class="card-body">
+                <h1>Run status</h1>
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th width="11">Scheduled</th>
+                            <td>{{ model.run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                        </tr>
+                        <tr>
+                            <th>Started</th>
+                            <td>{{ model.run.started_at.strftime("%Y-%m-%d %H:%M:%S") if model.run.started_at }}</td>
+                        </tr>
+                        <tr>
+                            <th>Ended</th>
+                            <td>{{ model.run.ended_at.strftime("%Y-%m-%d %H:%M:%S") if model.run.ended_at }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>{{ model.run.status.value }}</td>
+                        </tr>
+                        <!--
+                        <tr>
+                            <th>Messages to process</th>
+                            <td>{{ model.count }}</td>
+                        </tr>
+                        <tr>
+                            <th>Messages processed</th>
+                            <td>{{ model.process_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>Messages with error (unprocessed)</th>
+                            <td>{{ model.error_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>Messages to delete</th>
+                            <td>{{ model.delete_count }}</td>
+                        </tr>
+                        -->
+                    </tbody>
+                </table>
 
-        {% if model.run.status.value == "QUEUED" or model.run.status.value == "PROCESSING" %}
-        <div class="alert alert-info" role="alert">
-            This page auto refreshes in <span id="seconds-left"></span> seconds
-        </div>
-        {% endif %}
-    </div>
-    <div class="col-8 bg-white shadow-sm p-4">
-        <h1>Details</h1>
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Subject</th>
-                    <th>Reason</th>
-                    <th>Action</th>
-                </tr>
-                {% for result in model.batch_results %}
-                {% if result.action.value != "TBD" %}
-                    <tr>
-                        <td>{{ result.subject }}</td>
-                        <td>{{ result.reason }}</td>
-                        <td>{{ result.action.value }}</td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="3">Processing</td>
-                    </tr>
+                {% if model.run.status.value == "QUEUED" or model.run.status.value == "PROCESSING" %}
+                <div class="alert alert-info" role="alert">
+                    This page auto refreshes in <span id="seconds-left"></span> seconds
+                </div>
                 {% endif %}
-                {% endfor %}
-            </thead>
-        </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="card border border-0 shadow-sm">
+            <div class="card-body">
+                <h1>Details</h1>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Reason</th>
+                            <th>Action</th>
+                        </tr>
+                        {% for result in model.batch_results %}
+                        {% if result.action.value != "TBD" %}
+                        <tr>
+                            <td>{{ result.subject }}</td>
+                            <td>{{ result.reason }}</td>
+                            <td>{{ result.action.value }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3">Processing</td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </thead>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
