@@ -3,33 +3,40 @@
 {% block title %}Run Status{% endblock %}
 
 {% block meta %}
+{% if model.run.status.value == "QUEUED" or model.run.status.value == "PROCESSING" %}
 <meta http-equiv="refresh" content="5" >
+{% endif %}
 {% endblock %}
 
 {% block body %}
 
+<div class="row mb-2">
+    <div class="col">
+        <a class="link-offset-2" href="{{ url_for('home') }}"><i class="bi-arrow-left"></i> Back</a>
+    </div>
+</div>
 <div class="row">
-    <div class="col-6 offset-3 bg-white shadow-sm p-4">
+    <div class="col-3 bg-white shadow-sm p-4">
         <h1>Run status</h1>
-        <pre>{{ model.run.id }}</pre>
         <table class="table table-hover">
             <tbody>
                 <tr>
-                    <th>Scheduled at</th>
+                    <th width="11">Scheduled</th>
                     <td>{{ model.run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
                 </tr>
                 <tr>
-                    <th>Started at</th>
-                    <td>{{ model.run.started_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    <th>Started</th>
+                    <td>{{ model.run.started_at.strftime("%Y-%m-%d %H:%M:%S") if model.run.started_at }}</td>
                 </tr>
                 <tr>
-                    <th>Ended at</th>
+                    <th>Ended</th>
                     <td>{{ model.run.ended_at.strftime("%Y-%m-%d %H:%M:%S") if model.run.ended_at }}</td>
                 </tr>
                 <tr>
                     <th>Status</th>
                     <td>{{ model.run.status.value }}</td>
                 </tr>
+                <!--
                 <tr>
                     <th>Messages to process</th>
                     <td>{{ model.count }}</td>
@@ -46,12 +53,40 @@
                     <th>Messages to delete</th>
                     <td>{{ model.delete_count }}</td>
                 </tr>
+                -->
             </tbody>
         </table>
 
+        {% if model.run.status.value == "QUEUED" or model.run.status.value == "PROCESSING" %}
         <div class="alert alert-info" role="alert">
             This page auto refreshes in <span id="seconds-left"></span> seconds
         </div>
+        {% endif %}
+    </div>
+    <div class="col-8 bg-white shadow-sm p-4">
+        <h1>Details</h1>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Reason</th>
+                    <th>Action</th>
+                </tr>
+                {% for result in model.batch_results %}
+                {% if result.action.value != "TBD" %}
+                    <tr>
+                        <td>{{ result.subject }}</td>
+                        <td>{{ result.reason }}</td>
+                        <td>{{ result.action.value }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">Processing</td>
+                    </tr>
+                {% endif %}
+                {% endfor %}
+            </thead>
+        </table>
     </div>
 </div>
 

@@ -175,7 +175,7 @@ def register_routes(app):
         run = schedule_bg_run(user_id)
         flash("Your run has been queued for processing")
 
-        return redirect(url_for("home"))
+        return redirect(url_for("run_status", run_id = run.id))
 
     @app.route("/run-status/<run_id>", methods=["GET"])
     def run_status(run_id):
@@ -225,7 +225,8 @@ def register_routes(app):
             "count": message_count,
             "process_count": message_process_count,
             "error_count": message_error_count,
-            "delete_count": message_delete_count
+            "delete_count": message_delete_count,
+            "batch_results": run_batches
         })
 
         

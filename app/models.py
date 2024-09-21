@@ -57,6 +57,7 @@ class RunBatch(db.Model):
     batch_id = Column(UUID(as_uuid=True), default=uuid.uuid4)
     message_id = Column(String, nullable=False)
     subject = Column(String, nullable=True)
+    reason = Column(String, nullable=True)
     action = Column(Enum(MessageActionEnum), nullable=False, default=MessageActionEnum.TBD)
     errors = Column(String, nullable=True)
 

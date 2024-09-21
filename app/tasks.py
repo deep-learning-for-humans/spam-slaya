@@ -184,6 +184,7 @@ def process_batch(credentials, batch_id, open_api_key):
                 print(f"Message {subject} Inference: {ai_inference}")
 
                 message.subject = subject
+                message.reason = ai_inference.reason
                 message.action = MessageActionEnum[ai_inference.action]
 
                 if ai_inference.action.upper() == "DELETE":
