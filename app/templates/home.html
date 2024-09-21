@@ -15,10 +15,27 @@
                         <h1>Home</h1>
                     </div>
                     <div class="col-6 text-end align-self-center">
+                        {% if not runs_in_process %}
                         <a class="btn px-4 btn-primary" data-bs-toggle="modal" data-bs-target="#schedule-run-modal">
                             <i class="bi-file-earmark-plus"></i>
                             Schedule new clean up
                         </a>
+                        {% else %}
+                        <span class="d-inline-block" tabindex="0"
+                            data-bs-placement="bottom"
+                            data-bs-toggle="tooltip"
+                             data-bs-title="There is already a run in progress. Please wait for that to end to schedule another one">
+
+                            <a class="btn btn-outline-primary disabled"
+
+                                role="button"
+                                aria-disabled="true">
+                                    <i class="bi-file-earmark-plus"></i>
+                                    Schedule new clean up
+                            </a>
+
+                        </span>
+                        {% endif %}
                     </div>
                 </div>
 

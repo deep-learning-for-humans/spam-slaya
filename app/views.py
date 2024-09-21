@@ -158,8 +158,16 @@ def register_routes(app):
         total_messages = user_profile.get("messagesTotal", None)
 
         runs = Run.query.filter_by(user_id = user_id).order_by(Run.scheduled_at.desc())
+        runs_in_process = Run.query.filter(
+            Run.user_id == user.id,
+            Run.status != RunStatusEnum.DONE,
+            Run.status != RunStatusEnum.DONE_WITH_ERRORS
+        ).count() > 0
 
-        return render_template("home.html", runs=runs, total_messages=total_messages)
+        return render_template("home.html",
+                               runs=runs,
+                               total_messages=total_messages,
+                               runs_in_process=runs_in_process)
 
     @app.route("/schedule-run", methods=["POST"])
     def schedule_run():
@@ -184,6 +192,16 @@ def register_routes(app):
         no_of_emails_to_process = request.form.get("no_of_emails_to_process", None)
         if not no_of_emails_to_process:
             flash("Missing required input - number of emails to process")
+            return redirect(url_for("home"))
+
+        runs_in_process = Run.query.filter(
+            Run.user_id == user.id,
+            Run.status != RunStatusEnum.DONE,
+            Run.status != RunStatusEnum.DONE_WITH_ERRORS
+        ).count() > 0
+
+        if runs_in_process:
+            flash("There is already a run in progress. Please wait for that to end to schedule another one")
             return redirect(url_for("home"))
 
         run = schedule_bg_run(user_id, no_of_emails_to_process)
