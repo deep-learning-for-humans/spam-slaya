@@ -189,9 +189,8 @@ def process_batch(credentials, batch_id, open_api_key):
 
             print(f"[{batch_id}] Processing message {index} of {message_count}")
 
-            email = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
-
             try:
+                email = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
                 body = email_utils.get_email_body(email["raw"])
                 subject = email_utils.get_email_subject(email["raw"])
 
@@ -206,6 +205,18 @@ def process_batch(credentials, batch_id, open_api_key):
                 if ai_inference.action.upper() == "DELETE":
                     msgs_to_delete.append(message.message_id)
 
+                if len(msgs_to_delete) == 10:
+                    print(f"Deleting messages: {msgs_to_delete}")
+
+                    body = {
+                        "ids": msgs_to_delete,
+                        "addLabelIds": ["TRASH"]
+                    }
+
+                    service.users().messages().batchModify(userId="me", body=body).execute()
+
+                    msgs_to_delete = []
+
             except Exception as ex:
                 print(f"Exception: When processing message {message.message_id} with message {ex}")
                 print(traceback.format_exc())
@@ -215,22 +226,3 @@ def process_batch(credentials, batch_id, open_api_key):
 
             db.session.add(message)
             db.session.commit()
-
-        print(f"Deleting messages: {msgs_to_delete}")
-        if len(msgs_to_delete) > 0:
-            try:
-                body = {
-                    "ids": msgs_to_delete,
-                    "addLabelIds": ["TRASH"]
-                }
-                delete_resp = service.users().messages().batchModify(userId="me", body=body).execute()
-                print("Batch delete success")
-                print(delete_resp)
-
-            except Exception as ex:
-                print("Error while batch deleting")
-                print(traceback.format_exc())
-
-
-
-
