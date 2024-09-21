@@ -4,25 +4,29 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-4 offset-4 bg-white p-4 shadow-sm">
-        <div class="text-center fs-2">
-            <i class="bi-stars"></i>
-        </div>
-        <div class="mb-3"> 
-            <h1>Activate your LLM</h1>
-            <p class="fw-light">
-                We use OpenAI. <a class="link-offset-2" href="">Get your token</a> and enter it below
-            </p>
-        </div>
-        <form method="post">
-            <div class="mb-2">
-                <label for="api-key" class="form-label">API Key</label>
-                <input type="text" class="form-control" id="api-key" name="key" placeholder="Enter your API key" required>
+    <div class="col-4 offset-4">
+        <div class="card border border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-center fs-2">
+                    <i class="bi-stars"></i>
+                </div>
+                <div class="mb-3">
+                    <h1>Activate your LLM</h1>
+                    <p class="fw-light">
+                        We use OpenAI. <a class="link-offset-2" href="">Get your token</a> and enter it below
+                    </p>
+                </div>
+                <form method="post">
+                    <div class="mb-2">
+                        <label for="api-key" class="form-label">API Key</label>
+                        <input type="text" class="form-control" id="api-key" name="key" placeholder="Enter your API key" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Activate &amp; proceed</button>
+                    </div>
+                </form>
             </div>
-            <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Activate &amp; proceed</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}
