@@ -5,50 +5,54 @@
 {% block body %}
 
 <div class="row">
-    <div class="col-8 offset-2 bg-white shadow-sm">
-        <div class="p-4">
-            <div class="row">
-                <div class="col-6">
-                    <h1>Home</h1>
-                </div>
-                <div class="col-6 text-end align-self-center">
-                    <form action="/schedule-run" method="POST">
-                        <button class="btn px-4 btn-primary" type="submit"><i class="bi-file-earmark-plus"></i> Schedule new run</button>
-                    </form>
-                </div>
-            </div>
-            <div class="text-end mb-3">
-            </div>
+    <div class="col-8 offset-2">
+        </form>
+        <div class="card border border-0 shadow-sm">
+            <div class="card-body">
 
-            {% if runs %}
-            <table class="table table-sm table-hover">
-                <thead>
-                    <tr>
-                        <th>Scheduled at</th>
-                        <th>Started at</th>
-                        <th>Ended at</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for run in runs %}
-                    <tr>
-                        <td class="align-middle">
-                            {{ run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}
-                        </td>
-                        <td class="align-middle">
-                            {{ run.started_at.strftime("%Y-%m-%d %H:%M:%S") if run.started_at }}
-                        </td>
-                        <td class="align-middle">
-                            {{ run.ended_at.strftime("%Y-%m-%d %H:%M:%S") if run.ended_at }}
-                        </td>
-                        <td class="align-middle">{{ run.status.value }}</td>
-                        <td class="align-middle"><a href="{{ url_for('run_status', run_id = run.id) }}">Status</a></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <h1>Home</h1>
+                    </div>
+                    <div class="col-6 text-end align-self-center">
+                        <form action="/schedule-run" method="POST">
+                            <button class="btn px-4 btn-primary" type="submit"><i class="bi-file-earmark-plus"></i>
+                                Schedule new
+                                run</button>
+                    </div>
+                </div>
+
+                {% if runs %}
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Scheduled at</th>
+                            <th>Started at</th>
+                            <th>Ended at</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for run in runs %}
+                        <tr>
+                            <td class="align-middle">
+                                {{ run.scheduled_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                            </td>
+                            <td class="align-middle">
+                                {{ run.started_at.strftime("%Y-%m-%d %H:%M:%S") if run.started_at }}
+                            </td>
+                            <td class="align-middle">
+                                {{ run.ended_at.strftime("%Y-%m-%d %H:%M:%S") if run.ended_at }}
+                            </td>
+                            <td class="align-middle">{{ run.status.value }}</td>
+                            <td class="align-middle"><a class="link-underline link-underline-opacity-0" href="{{ url_for('run_status', run_id = run.id) }}">Status <i class="bi-arrow-right"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
