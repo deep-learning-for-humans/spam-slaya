@@ -156,6 +156,7 @@ def register_routes(app):
 
         user_profile = service.users().getProfile(userId = user_id).execute()
         total_messages = user_profile.get("messagesTotal", None)
+        email_address = user_profile.get("emailAddress", None)
 
         runs = Run.query.filter_by(user_id = user_id).order_by(Run.scheduled_at.desc())
         runs_in_process = Run.query.filter(
@@ -167,7 +168,8 @@ def register_routes(app):
         return render_template("home.html",
                                runs=runs,
                                total_messages=total_messages,
-                               runs_in_process=runs_in_process)
+                               runs_in_process=runs_in_process,
+                               email_address=email_address)
 
     @app.route("/schedule-run", methods=["POST"])
     def schedule_run():
