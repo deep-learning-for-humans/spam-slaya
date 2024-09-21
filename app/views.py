@@ -4,9 +4,12 @@ import json
 import os
 
 from flask import request, render_template, url_for, session, redirect, flash, abort
+
 from google.auth.transport import requests
 from google.oauth2.id_token import verify_oauth2_token
 from google_auth_oauthlib.flow import Flow
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 
 import redis
 from rq import Queue
@@ -148,9 +151,15 @@ def register_routes(app):
             print("Credentials expired. Redirecting to login")
             return redirect(url_for("login"))
 
+        credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
+        service = build("gmail", "v1", credentials=credentials)
+
+        user_profile = service.users().getProfile(userId = user_id).execute()
+        total_messages = user_profile.get("messagesTotal", None)
+
         runs = Run.query.filter_by(user_id = user_id).order_by(Run.scheduled_at.desc())
 
-        return render_template("home.html", runs=runs)
+        return render_template("home.html", runs=runs, total_messages=total_messages)
 
     @app.route("/schedule-run", methods=["POST"])
     def schedule_run():
@@ -172,7 +181,12 @@ def register_routes(app):
             print("Credentials expired. Redirecting to login")
             return redirect(url_for("login"))
 
-        run = schedule_bg_run(user_id)
+        no_of_emails_to_process = request.form.get("no_of_emails_to_process", None)
+        if not no_of_emails_to_process:
+            flash("Missing required input - number of emails to process")
+            return redirect(url_for("home"))
+
+        run = schedule_bg_run(user_id, no_of_emails_to_process)
         flash("Your run has been queued for processing")
 
         return redirect(url_for("run_status", run_id = run.id))

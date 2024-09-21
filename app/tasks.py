@@ -26,7 +26,7 @@ Note: This can be done in the same bg_process_run function but because the
 amount of credentials we have to check is quite high, thought it best to create
 an abstraction here.
 """
-def schedule_bg_run(user_id):
+def schedule_bg_run(user_id, no_of_emails_to_process):
     print(f"scheduling run for {user_id}")
 
     user = User.query.get(user_id)
@@ -46,7 +46,8 @@ def schedule_bg_run(user_id):
         return
 
     new_run = Run(
-        user_id = user_id
+        user_id = user_id,
+        to_process = no_of_emails_to_process
     )
 
     db.session.add(new_run)
@@ -101,17 +102,32 @@ def bg_process_run(run_id):
         credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
         service = build("gmail", "v1", credentials=credentials)
 
-        BATCH_SIZE = 2
+        max_results = 500
+        if run.to_process < 500:
+            max_results = run.to_process
+            no_of_batches = 1
+        else:
+            no_of_batches = run.to_process // max_results
+            if run.to_process % max_results > 0:
+                no_of_batches += 1
 
-        results = service.users().messages().list(userId="me", maxResults=BATCH_SIZE).execute()
+        print(f"To Process: [{run.to_process}]. Processing in [{no_of_batches}] batches with [{max_results}] in each batch")
+
+        #####
+        # FOR DEVELOPMENT
+        # This must be removed before going live
+        max_results = 2
+        no_of_batches = 2
+        #
+        ######
+
+        results = service.users().messages().list(userId="me", maxResults=max_results).execute()
         messages = results.get("messages", [])
 
-        count = 1
-
+        batch_count = 1
         while len(messages) > 0:
 
-            #todo remove this
-            if count == 3:
+            if batch_count > no_of_batches:
                 print("breaking")
                 break
 
@@ -132,10 +148,10 @@ def bg_process_run(run_id):
 
             page_token = results.get("nextPageToken", None)
             if page_token:
-                results = service.users().messages().list(userId="me", maxResults=BATCH_SIZE, pageToken = page_token).execute()
+                results = service.users().messages().list(userId="me", maxResults=max_results, pageToken = page_token).execute()
                 messages = results.get("messages", [])
 
-            count += 1
+            batch_count += 1
 
         batch_has_errors = RunBatch.query.filter(
             RunBatch.run_id == run.id,

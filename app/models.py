@@ -43,6 +43,7 @@ class Run(db.Model):
     started_at = Column(DateTime, nullable=True)
     ended_at = Column(DateTime, nullable=True)
     status = Column(Enum(RunStatusEnum), default=RunStatusEnum.QUEUED)
+    to_process = Column(Integer, nullable=False)
     processed_count = Column(Integer, default=0)
 
     user = relationship('User', back_populates='runs')
