@@ -15,6 +15,7 @@ def create_app():
     from .models import User, Run, RunBatch
 
     with app.app_context():
+        print(f"Calling create_all on DB: [{Config.SQLALCHEMY_DATABASE_URI}]")
         db.create_all()
 
     # Register routes
