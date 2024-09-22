@@ -1,4 +1,5 @@
 import traceback
+import time
 import uuid
 import datetime
 import json
@@ -232,3 +233,15 @@ def process_batch(credentials, batch_id, open_api_key):
 
             db.session.add(message)
             db.session.commit()
+
+        # If there are any remaining messages to delete,
+        # delete them
+        if len(msgs_to_delete) > 0:
+            print(f"Deleting remaining messages: {msgs_to_delete}")
+
+            body = {
+                "ids": msgs_to_delete,
+                "addLabelIds": ["TRASH"]
+            }
+
+            service.users().messages().batchModify(userId="me", body=body).execute()
