@@ -2,24 +2,35 @@ import instructor
 from openai import OpenAI
 from pydantic import BaseModel
 
-PROMPT = """you are an expert email analyzer. you check the content of the email and decide to delete or keep them.
+PROMPT = """You are an advanced email classification model. Your task is to analyze email content and determine whether to DELETE or KEEP the email based on its content, source, and purpose.
 
-* you decide to DELETE the email if they are advertisement regarding mutual funds , SIP advertizement, or stock markets general information, property Ads / posting.
-* you decide to KEEP the email if they are shopping order, SIP trigger, SIP transaction details or Mutual Fund order details.
+**Criteria for DELETE:**  
+- Emails related to advertisements, promotions, or marketing (e.g., offers, discounts, sales campaigns).  
+- Generic newsletters, spam, or unsolicited content.
 
-This is not the complete list of categories. You should understand other important emails and decide to keep it.
+**Criteria for KEEP:**  
+- Transactional emails (e.g., receipts, invoices, account alerts, subscription confirmations).  
+- Personal emails (from friends, family, or known contacts).  
+- Emails from trusted or important sources (e.g., financial institutions, government organizations).  
+- Any emails related to professional matters, appointments, or important updates.
 
-respond only by choosing DELETE / KEEP as a json
-add a confidence score of your decision in the score field. score can be between 0.1 to 0.99, higher the value means higher the confidence.
+**Instructions:**  
+- If the email content fits any of the DELETE or KEEP criteria, respond only with a JSON object containing:
+  - **action**: "KEEP" or "DELETE" based on your decision.
+  - **reason**: A brief reason (e.g., "Txn" for transactions, "Ad" for advertisements, "Spam" for spam, "Personal" for personal emails).
+  - **score**: A confidence score between 1 to 100, where higher values indicate greater confidence in your decision.
 
-Below are some example responses
-{'action':'KEEP', 'reason':'Txn', 'score':0.7}
-{'action':'DELETE', 'reason': 'Ad', 'score':0.95}
-{'action':'DELETE', 'reason': 'Spam', 'score': 0.6}
+**Examples:**  
+```json
+{'action': 'KEEP', 'reason': 'Txn', 'score': 80}
+{'action': 'DELETE', 'reason': 'Ad', 'score': 90}
+{'action': 'DELETE', 'reason': 'Spam', 'score': 60}
+```
 
-you should err on the safer side
-remember to respond only using json and nothing more."""
-
+**Important Notes:**  
+- The list of DELETE and KEEP categories provided is not exhaustive. Use your judgment to recognize important emails not explicitly mentioned and classify them accordingly.  
+- Always respond only in JSON format without additional text or explanations.
+"""
 
 class MailAction(BaseModel):
     action: str
