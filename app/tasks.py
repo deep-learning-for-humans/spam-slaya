@@ -205,7 +205,7 @@ def process_batch(credentials, batch_id, open_api_key):
                 if ai_inference.action.upper() == "DELETE":
                     msgs_to_delete.append(message.message_id)
 
-                if len(msgs_to_delete) == 10:
+                if len(msgs_to_delete) == 15:
                     print(f"Deleting messages: {msgs_to_delete}")
 
                     body = {
@@ -216,6 +216,12 @@ def process_batch(credentials, batch_id, open_api_key):
                     service.users().messages().batchModify(userId="me", body=body).execute()
 
                     msgs_to_delete = []
+
+                # Every 15th call, sleep for 10 seconds to not
+                # hit the rate limit on the Open AI side
+                if index % 15 == 0:
+                    time.sleep(10)
+
 
             except Exception as ex:
                 print(f"Exception: When processing message {message.message_id} with message {ex}")
