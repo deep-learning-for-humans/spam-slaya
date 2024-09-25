@@ -40,12 +40,15 @@ class MailAction(BaseModel):
 
 def infer_email_type(api_key, user_msg):
     client = instructor.from_openai(
-        OpenAI(api_key=api_key),
+        OpenAI(
+            base_url="http://localhost:11434/v1",
+            api_key=api_key
+            ),
         mode=instructor.Mode.JSON,
     )
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="qwen2.5:3b",
         messages=[
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": user_msg[:700]},
