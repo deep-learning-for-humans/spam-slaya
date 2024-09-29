@@ -86,8 +86,6 @@ def register_routes(app):
 
             db.session.add(new_user)
             db.session.commit()
-
-            return redirect(url_for("activate_llm"))
         else:
             expiry = user.gmail_credential_expiry
             if credentials.expiry > expiry:
@@ -97,37 +95,7 @@ def register_routes(app):
                 db.session.add(user)
                 db.session.commit()
 
-            if not user.open_api_key:
-                return redirect(url_for("activate_llm"))
-            else:
-                return redirect(url_for("home"))
-
-    @app.route("/activate-llm", methods=["GET", "POST"])
-    def activate_llm():
-
-        user_id = session.get("user")
-
-        if not user_id:
-            return redirect(url_for("login"))
-
-        user = User.query.filter_by(id=user_id).first()
-
-        if not user:
-            return redirect(url_for("login"))
-
-        if request.method == "GET":
-            if not user.open_api_key:
-                return render_template("activate-llm.html")
-            else:
-                redirect(url_for("home"))
-        elif request.method == "POST":
-            key = request.form["key"]
-
-            user.open_api_key = key
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for("home"))
-            # handle key empty with flash
+        return redirect(url_for("home"))
 
     @app.route("/home")
     def home():
@@ -139,9 +107,9 @@ def register_routes(app):
 
         user = User.query.filter_by(id=user_id).first()
 
-        if not user or not user.open_api_key or not user.gmail_credentials:
+        if not user or not user.gmail_credentials:
             # use flash here
-            print("no user or no open api key or no gmail creds. Redirecting to login")
+            print("no user no gmail creds. Redirecting to login")
             return redirect(url_for("login"))
 
         print(datetime.datetime.utcnow(), user.gmail_credential_expiry)
@@ -181,9 +149,9 @@ def register_routes(app):
 
         user = User.query.filter_by(id=user_id).first()
 
-        if not user or not user.open_api_key or not user.gmail_credentials:
+        if not user or not user.gmail_credentials:
             # use flash here
-            print("no user or no open api key or no gmail creds. Redirecting to login")
+            print("no user or no gmail creds. Redirecting to login")
             return redirect(url_for("login"))
 
         if datetime.datetime.utcnow() > user.gmail_credential_expiry:
@@ -221,9 +189,9 @@ def register_routes(app):
 
         user = User.query.filter_by(id=user_id).first()
 
-        if not user or not user.open_api_key or not user.gmail_credentials:
+        if not user or not user.gmail_credentials:
             # use flash here
-            print("no user or no open api key or no gmail creds. Redirecting to login")
+            print("no user or no gmail creds. Redirecting to login")
             return redirect(url_for("login"))
 
         if datetime.datetime.utcnow() > user.gmail_credential_expiry:
@@ -262,41 +230,3 @@ def register_routes(app):
             "delete_count": message_delete_count,
             "batch_results": run_batches
         })
-
-        
-        
-
-
-
-
-#@app.route("/gmail_actions")
-#def gmail_actions():
-#    if "credentials" not in session:
-#        return redirect("login")
-#
-#    credentials = Credentials(**session["credentials"])
-#    service = build("gmail", "v1", credentials=credentials)
-#
-#    results = service.users().messages().list(userId="me", maxResults=5).execute()
-#    messages = results.get("messages", [])
-#
-#    email_list = []
-#    for message in messages:
-#
-#        msg_raw = service.users().messages().get(userId="me", id=message["id"], format="raw").execute()
-#
-#        body = get_email_body(msg_raw["raw"])
-#        subject = get_email_subject(msg_raw["raw"])
-#
-#        del_action = infer_email_type(body)
-#
-#        email_list.append(
-#            {
-#                "id": message["id"],
-#                "subj": subject,
-#                "body": body,
-#                "to_delete": del_action,
-#            }
-#        )
-#
-#    return "OK"

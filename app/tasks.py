@@ -42,10 +42,6 @@ def schedule_bg_run(user_id, no_of_emails_to_process):
         print(f"Gmail credentials are expired for {user_id}. Exiting")
         return
 
-    if not user.open_api_key:
-        print(f"Open API key not found for {user_id}. Exiting")
-        return
-
     new_run = Run(
         user_id = user_id,
         to_process = no_of_emails_to_process
@@ -145,7 +141,7 @@ def bg_process_run(run_id):
 
             db.session.commit()
 
-            process_batch(credentials, batch_id, user.open_api_key)
+            process_batch(credentials, batch_id)
 
             page_token = results.get("nextPageToken", None)
             if page_token:
@@ -178,7 +174,7 @@ that particular RunBatch is completed.
 
 As it processes each email, it writes the results to that row in the RunBatch. 
 """
-def process_batch(credentials, batch_id, open_api_key):
+def process_batch(credentials, batch_id):
 
         service = build("gmail", "v1", credentials=credentials)
 

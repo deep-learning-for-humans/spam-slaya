@@ -38,11 +38,11 @@ class MailAction(BaseModel):
     confidence: str
 
 
-def infer_email_type(api_key, user_msg):
+def infer_email_type(user_msg):
     client = instructor.from_openai(
         OpenAI(
             base_url="http://localhost:11434/v1",
-            api_key=api_key
+            api_key="DUMMY"
             ),
         mode=instructor.Mode.JSON,
     )
