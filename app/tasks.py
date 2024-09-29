@@ -195,7 +195,7 @@ def process_batch(credentials, batch_id):
                     subj = ""
                 else:
                     subj = subject
-                ai_inference = ai_utils.infer_email_type(open_api_key, subj + body)
+                ai_inference = ai_utils.infer_email_type(subj + body)
 
                 print(f"Message {subject} Inference: {ai_inference}")
 
