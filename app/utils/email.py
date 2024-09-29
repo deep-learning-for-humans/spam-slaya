@@ -1,7 +1,41 @@
+import re
+import quopri
 import base64
 from bs4 import BeautifulSoup
 import email
 
+def subject_needs_decoding(subject):
+    # Regular expression to detect MIME-encoded strings
+    mime_encoded_pattern = r'=\?.+\?.\?.+\?='
+
+    # Check if the subject matches the MIME-encoded pattern
+    if re.search(mime_encoded_pattern, subject):
+        return True
+    else:
+        return False
+
+def decode_subject(encoded_subject):
+    # Regular expression to match MIME encoded parts
+    mime_regex = r'=\?([^?]+)\?([BQ])\?([^?]+)\?='
+
+    def decode_part(match):
+        charset, encoding, encoded_text = match.groups()
+
+        if encoding.upper() == 'B':  # Base64 encoding
+            decoded_bytes = base64.b64decode(encoded_text)
+        elif encoding.upper() == 'Q':  # Quoted-Printable encoding
+            # Replace underscores with spaces (MIME Quoted-Printable uses _ for space)
+            encoded_text = encoded_text.replace('_', ' ')
+            decoded_bytes = quopri.decodestring(encoded_text)
+        else:
+            raise ValueError(f"Unknown encoding type: {encoding}")
+
+        return decoded_bytes.decode(charset, errors='replace')
+
+    # Apply the regex to find and decode all encoded parts in the subject
+    decoded_subject = re.sub(mime_regex, decode_part, encoded_subject)
+
+    return decoded_subject
 
 def get_email_subject(raw_email_base64):
 
@@ -11,7 +45,11 @@ def get_email_subject(raw_email_base64):
     raw_email = base64.urlsafe_b64decode(raw_email_base64).decode("utf-8")
     msg = email.message_from_string(raw_email)
 
-    return msg["Subject"] or None
+    subject = msg["Subject"] or None
+    if subject and subject_needs_decoding(subject):
+        subject = decode_subject(subject)
+
+    return subject
 
 
 def get_email_body(raw_email_base64):
