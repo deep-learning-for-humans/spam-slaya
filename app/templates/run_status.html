@@ -79,7 +79,21 @@
     <div class="col-8">
         <div class="card border border-0 shadow-sm">
             <div class="card-body">
-                <h1>Details</h1>
+                <div class="row mb-3 d-flex align-items-center">
+                    <div class="col-9">
+                        <h1>Details</h1>
+                    </div>
+                    <div class="col-3">
+                        <form id="show-filter-form" method="GET">
+                            <label>Show</label>
+                            <select id="show-filter-select" class="form-select" aria-label="Default select example" name="show">
+                                <option value="ALL">ALL inferences</option>
+                                <option value="KEEP">KEEP only</option>
+                                <option value="DELETE">DELETE only</option>
+                              </select>
+                        </form>
+                    </div>
+                </div>
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -121,6 +135,11 @@
 <script>
     $(function(){
         $("#seconds-left").text(5);
+        $("#show-filter-select").val("{{ model.show_filter_value }}")
+
+        $("#show-filter-select").change(function(){
+            $("#show-filter-form").submit();
+        })
 
         setInterval(() => {
             const secondsLeft = parseInt($("#seconds-left").text());

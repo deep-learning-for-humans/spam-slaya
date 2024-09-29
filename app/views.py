@@ -203,7 +203,14 @@ def register_routes(app):
         if not run:
             return abort(404)
 
+
         run_batches = RunBatch.query.filter_by(run_id = run.id)
+
+        show = request.args.get("show", "ALL")
+        if show == "KEEP":
+            run_batches = run_batches.filter_by(action = MessageActionEnum.KEEP)
+        elif show == "DELETE":
+            run_batches = run_batches.filter_by(action = MessageActionEnum.DELETE)
 
         message_count = run_batches.count()
 
@@ -228,5 +235,6 @@ def register_routes(app):
             "process_count": message_process_count,
             "error_count": message_error_count,
             "delete_count": message_delete_count,
-            "batch_results": run_batches
+            "batch_results": run_batches,
+            "show_filter_value": show
         })
