@@ -48,7 +48,7 @@ def infer_email_type(api_key, user_msg):
     )
 
     response = client.chat.completions.create(
-        model="gemma2:9b-instruct-q2_K",
+        model="qwen2.5:3b-instruct-q4_0",
         messages=[
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": user_msg[:700]},
