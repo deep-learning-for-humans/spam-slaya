@@ -82,7 +82,14 @@
                         {% for result in model.batch_results %}
                         {% if result.action.value != "TBD" %}
                         <tr>
-                            <td>{{ result.subject }}</td>
+                            <td>
+                                {% if result.action.value.upper() == "DELETE" %}
+                                    <i class="bi-envelope-slash text-danger"></i>
+                                {% else %}
+                                    <i class="bi-envelope-check"></i>
+                                {% endif %}
+                                {{ result.subject }}
+                            </td>
                             <td>{{ result.reason }}</td>
                             <td>{{ result.action.value }}</td>
                         </tr>
