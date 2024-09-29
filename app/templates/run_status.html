@@ -83,14 +83,14 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Subject</th>
-                            <th>Reason</th>
-                            <th>Action</th>
+                            <th width="80%">Subject</th>
+                            <th width="10%">Reason</th>
+                            <th width="10%">Action</th>
                         </tr>
                         {% for result in model.batch_results %}
                         {% if result.action.value != "TBD" %}
                         <tr>
-                            <td>
+                            <td class="overflow-hidden">
                                 {% if result.action.value.upper() == "DELETE" %}
                                     <i class="bi-envelope-slash text-danger"></i>
                                 {% else %}
