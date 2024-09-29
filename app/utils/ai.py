@@ -10,7 +10,7 @@ PROMPT = """You are an advanced email classification model. Your task is to anal
 
 **Criteria for KEEP:**  
 - Transactional emails (e.g., receipts, invoices, account alerts, subscription confirmations).  
-- Personal emails (from friends, family, or known contacts).  
+- Personal emails (from friends, family, or known contacts which are not from social media).  
 - Emails from trusted or important sources (e.g., financial institutions, government organizations).  
 - Any emails related to professional matters, appointments, or important updates.
 
@@ -18,13 +18,13 @@ PROMPT = """You are an advanced email classification model. Your task is to anal
 - If the email content fits any of the DELETE or KEEP criteria, respond only with a JSON object containing:
   - **action**: "KEEP" or "DELETE" based on your decision.
   - **reason**: A brief reason (e.g., "Txn" for transactions, "Ad" for advertisements, "Spam" for spam, "Personal" for personal emails).
-  - **score**: A confidence score between 1 to 100, where higher values indicate greater confidence in your decision.
+  - **confidence**: One of the 3 values HIGH, MEDIUM, or LOW, representing the confidence of the classification.
 
 **Examples:**  
 ```json
-{'action': 'KEEP', 'reason': 'Txn', 'score': 80}
-{'action': 'DELETE', 'reason': 'Ad', 'score': 90}
-{'action': 'DELETE', 'reason': 'Spam', 'score': 60}
+{'action': 'KEEP', 'reason': 'Txn', 'confidence': 'MEDIUM'}
+{'action': 'DELETE', 'reason': 'Ad', 'confidence': 'HIGH'}
+{'action': 'DELETE', 'reason': 'Spam', 'confidence': 'LOW'}
 ```
 
 **Important Notes:**  
@@ -35,7 +35,7 @@ PROMPT = """You are an advanced email classification model. Your task is to anal
 class MailAction(BaseModel):
     action: str
     reason: str
-    score: float
+    confidence: str
 
 
 def infer_email_type(api_key, user_msg):

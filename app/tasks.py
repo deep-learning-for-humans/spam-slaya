@@ -117,7 +117,7 @@ def bg_process_run(run_id):
         #####
         # FOR DEVELOPMENT
         # This must be removed before going live
-        max_results = 2
+        max_results = 20
         no_of_batches = 2
         #
         ######
@@ -244,4 +244,4 @@ def process_batch(credentials, batch_id, open_api_key):
                 "addLabelIds": ["TRASH"]
             }
 
-            service.users().messages().batchModify(userId="me", body=body).execute()
+            # service.users().messages().batchModify(userId="me", body=body).execute()
