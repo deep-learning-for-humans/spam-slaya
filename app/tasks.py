@@ -64,7 +64,7 @@ def schedule_bg_run(user_id, no_of_emails_to_process):
 
     print(f"All OK. Proceeding to run the job in the background for user {user_id}")
 
-    q.enqueue(bg_process_run, job_timeout='1h', args=(new_run.id,))
+    job = q.enqueue(bg_process_run, job_id=new_run.id.hex, job_timeout='1h', args=(new_run.id,))
 
     return new_run
 

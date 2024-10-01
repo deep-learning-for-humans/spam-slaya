@@ -149,16 +149,30 @@ def register_routes(app):
         email_address = user_profile.get("emailAddress", None)
 
         runs = Run.query.filter_by(user_id = user_id).order_by(Run.scheduled_at.desc())
+
+        # Get the run that is processing
         runs_in_process = Run.query.filter(
             Run.user_id == user.id,
             Run.status != RunStatusEnum.DONE,
             Run.status != RunStatusEnum.DONE_WITH_ERRORS
-        ).count() > 0
+        )
+
+        # Check its job status
+        run_ids = [ run.id.hex for run in runs_in_process ]
+        jobs = Job.fetch_many(run_ids, connection = redis_conn)
+        job_statuses = [ job.get_status(refresh = True) for job in jobs if job ]
+
+        print(job_statuses)
+
+        # If the job has ended, then mark the job as done with errors
+        # If the job is ongoing, then don't allow to schedule another job
+
+        has_runs_in_process = runs_in_process.count() > 0
 
         return render_template("home.html",
                                runs=runs,
                                total_messages=total_messages,
-                               runs_in_process=runs_in_process,
+                               runs_in_process=has_runs_in_process,
                                email_address=email_address)
 
     @app.route("/schedule-run", methods=["POST"])
