@@ -26,7 +26,7 @@ services:
       sh -c "pip install -r requirements.txt && python worker.py"
     depends_on:
       - redisserver
-      - fastapi
+      - flask
 
   redisserver:
     image: redis:alpine
