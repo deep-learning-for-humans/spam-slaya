@@ -5,7 +5,7 @@ services:
     image: python:3.12-alpine
     container_name: flask
     volumes:
-      - ./:/fast-app  # Mount your FastAPI app directory
+      - ./:/flask-app  # Mount your FastAPI app directory
     working_dir: /flask-app
     environment:
       DATABASE_URL: "sqlite:////flask-app/app.db"
@@ -20,8 +20,8 @@ services:
     image: python:3.12-alpine
     container_name: worker
     volumes:
-      - ./:/fast-app  # Mount your FastAPI app directory
-    working_dir: /fast-app
+      - ./:/flask-app  # Mount your FastAPI app directory
+    working_dir: /flask-app
     command: >
       sh -c "pip install -r requirements.txt && python worker.py"
     depends_on:
