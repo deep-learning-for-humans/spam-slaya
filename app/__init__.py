@@ -10,6 +10,7 @@ def create_app():
     app.config.from_object(Config)
 
     # Initialize extensions
+    print(f"db url {Config.SQLALCHEMY_DATABASE_URI}")
     db.init_app(app)
 
     from .models import User, Run, RunBatch

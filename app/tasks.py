@@ -4,11 +4,13 @@ import uuid
 import datetime
 import json
 
-import redis
+from redis import Redis
 from rq import Queue
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import Session
 
 from . import db
 from . import create_app
@@ -16,7 +18,8 @@ from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
 from .utils import email as email_utils, ai as ai_utils
 
-redis_conn = redis.from_url(Config.RQ_BROKER_URL)
+# redis_conn = redis.from_url(Config.RQ_BROKER_URL)
+redis_conn = Redis(host='redisserver', port=6379, db=0)
 q = Queue(connection=redis_conn)
 
 """
@@ -79,9 +82,11 @@ def bg_process_run(run_id):
 
     print(f"Running job {run_id} in background")
 
-    app = create_app()
-    with app.app_context():
-        run = Run.query.get(run_id)
+    # app = create_app()
+    print(f"worker connexting to db url [{Config.SQLALCHEMY_DATABASE_URI}]")
+    engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
+    with Session(engine) as session:
+        run = session.query(Run).get(run_id)
         if not run:
             print(f"FATAL. Unable to find run {run_id}. Exiting")
             return
@@ -89,12 +94,12 @@ def bg_process_run(run_id):
         run.started_at = datetime.datetime.utcnow()
         run.status = RunStatusEnum.PROCESSING
 
-        db.session.add(run)
-        db.session.commit()
+        session.add(run)
+        session.commit()
 
         print(f"Marked job as processing")
 
-        user = User.query.get(run.user_id)
+        user = session.query(User).get(run.user_id)
 
         credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
         service = build("gmail", "v1", credentials=credentials)
@@ -137,11 +142,11 @@ def bg_process_run(run_id):
                     batch_id = batch_id,
                     message_id = message["id"],
                 )
-                db.session.add(batch)
+                session.add(batch)
 
-            db.session.commit()
+            session.commit()
 
-            process_batch(credentials, batch_id)
+            process_batch(credentials, batch_id, session)
 
             page_token = results.get("nextPageToken", None)
             if page_token:
@@ -150,7 +155,7 @@ def bg_process_run(run_id):
 
             batch_count += 1
 
-        batch_has_errors = RunBatch.query.filter(
+        batch_has_errors = session.query(RunBatch).filter(
             RunBatch.run_id == run.id,
             RunBatch.action == MessageActionEnum.UNPROCESSED
         ).count() > 0
@@ -158,8 +163,8 @@ def bg_process_run(run_id):
         run.ended_at = datetime.datetime.utcnow()
         run.status = RunStatusEnum.DONE_WITH_ERRORS if batch_has_errors else RunStatusEnum.DONE
 
-        db.session.add(run)
-        db.session.commit()
+        session.add(run)
+        session.commit()
 
 
 """
@@ -174,11 +179,11 @@ that particular RunBatch is completed.
 
 As it processes each email, it writes the results to that row in the RunBatch. 
 """
-def process_batch(credentials, batch_id):
+def process_batch(credentials, batch_id, session):
 
         service = build("gmail", "v1", credentials=credentials)
 
-        messages = RunBatch.query.filter_by(batch_id = batch_id)
+        messages = session.query(RunBatch).filter_by(batch_id = batch_id)
         message_count = messages.count()
         msgs_to_delete = []
 
@@ -231,8 +236,8 @@ def process_batch(credentials, batch_id):
                 message.action = MessageActionEnum.UNPROCESSED
                 message.errors = repr(ex)
 
-            db.session.add(message)
-            db.session.commit()
+            session.add(message)
+            session.commit()
 
         # If there are any remaining messages to delete,
         # delete them
