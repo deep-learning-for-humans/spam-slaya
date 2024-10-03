@@ -14,7 +14,7 @@ services:
     command: >
       sh -c "pip install -r requirements.txt && python run.py"
     ports:
-      - "8000:8000"
+      - "8080:8080"
 
   worker:
     image: python:3.12-alpine
@@ -22,6 +22,8 @@ services:
     volumes:
       - ./:/flask-app  # Mount your FastAPI app directory
     working_dir: /flask-app
+    environment:
+      DATABASE_URL: "sqlite:////flask-app/app.db"
     command: >
       sh -c "pip install -r requirements.txt && python worker.py"
     depends_on:
@@ -42,6 +44,8 @@ services:
     command: ollama serve
     volumes:
       - ./models:/models  # Optional: mount a directory for models
+    command: >
+      sh -c "ollama pull qwen2.5:3b-instruct-q4_0"
     environment:
       - MODEL=qwen2.5:3b-instruct-q4_0
     ports:
