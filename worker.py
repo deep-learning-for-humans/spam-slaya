@@ -9,4 +9,4 @@ conn = Redis(host='redisserver', port=6379, db=0)
 
 if __name__ == "__main__":
     worker = Worker(listen, connection=conn)
-    worker.work()
+    worker.work(logging_level="DEBUG")
