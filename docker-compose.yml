@@ -1,50 +1,50 @@
 version: '3.3'
 
 services:
-  flask:
-    image: python:3.12-alpine
-    container_name: flask
-    volumes:
-      - ./:/flask-app  # Mount your FastAPI app directory
-    working_dir: /flask-app
-    environment:
-      DATABASE_URL: "sqlite:////flask-app/app.db"
-    command: >
-      sh -c "touch /flask-app/app.db"
-    command: >
-      sh -c "pip install -r requirements.txt && python run.py"
-    ports:
-      - "8080:8080"
-
-  worker:
-    image: python:3.12-alpine
-    container_name: worker
-    volumes:
-      - ./:/flask-app  # Mount your FastAPI app directory
-    working_dir: /flask-app
-    environment:
-      DATABASE_URL: "sqlite:////flask-app/app.db"
-      OLLAMA_MODEL_NAME: "qwen2.5:3b-instruct-q4_0"
-    command: sh -c "./setup-worker.sh"
-    depends_on:
-      - redisserver
-      - ollama
 
   redisserver:
     image: redis:alpine
-    container_name: redisserver
+    container_name: cleanitup-redis
+    restart: always
     ports:
       - "6379:6379"
     expose:
       - "6379"
 
+  webapp:
+    build: .
+    container_name: cleanitup-webapp
+    environment:
+      - DATABASE_URL=sqlite:////app/db/prod.db
+    volumes:
+      - ./db:/app/db
+    restart: always
+    command: python run.py
+    depends_on:
+      - redisserver
+    ports:
+      - "8080:8080"
+
+  worker:
+    build: .
+    container_name: cleanitup-worker
+    environment:
+      - DATABASE_URL=sqlite:////app/db/prod.db
+    volumes:
+      - ./db:/app/db
+    command: python worker.py
+    restart: always
+    depends_on:
+      - ollama
+      - redisserver
+      - webapp
+
   ollama:
     image: ollama/ollama:latest
-    container_name: ollama
+    container_name: cleanitup-ollama
     ports:
-      - "11434:11434"
-    expose:
-      - "11434"
-
-    # Note: The environment variable above may vary depending on the Ollama setup.
-
+      - 11434:11434
+    volumes:
+      - ./ollama/ollama:/root/.ollama
+    tty: true
+    restart: always
