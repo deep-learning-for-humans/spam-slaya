@@ -6,3 +6,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     RQ_BROKER_URL = os.environ.get('RQ_BROKER_URL') or 'redis://0.0.0.0:6379/0'
+
+    CLIENT_SECRET_PATH = os.environ.get('GOOGLE_CLIENT_SECRET_PATH') or 'client_secret.json'

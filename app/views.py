@@ -19,7 +19,6 @@ from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
 from .tasks import schedule_bg_run
 
-
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 SCOPES = [
@@ -28,9 +27,6 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
     "openid"
 ]
-
-# Replace with your OAuth 2.0 client ID file path
-CLIENT_SECRETS_FILE = "client_secret.json"
 
 redis_conn = redis.from_url(Config.RQ_BROKER_URL)
 q = Queue(connection=redis_conn)
@@ -47,7 +43,7 @@ def register_routes(app):
 
     @app.route("/login")
     def login():
-        flow = Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+        flow = Flow.from_client_secrets_file(Config.CLIENT_SECRET_PATH, scopes=SCOPES)
         flow.redirect_uri = url_for("oauth2callback", _external=True)
         authorization_url, state = flow.authorization_url(
             access_type="offline", include_granted_scopes="true",
@@ -60,7 +56,7 @@ def register_routes(app):
     def oauth2callback():
         state = session["state"]
         flow = Flow.from_client_secrets_file(
-            CLIENT_SECRETS_FILE, scopes=SCOPES, state=state
+            Config.CLIENT_SECRET_PATH, scopes=SCOPES, state=state
         )
         flow.redirect_uri = url_for("oauth2callback", _external=True)
 
