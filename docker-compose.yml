@@ -15,9 +15,9 @@ services:
     build: .
     container_name: cleanitup-webapp
     environment:
-      - DATABASE_URL=sqlite:////app/db/prod.db
+      - DATABASE_URL=sqlite:////prod/db/cleanitup.db
     volumes:
-      - ./db:/app/db
+      - ./prod/db:/prod/db
     restart: always
     command: python run.py
     depends_on:
@@ -29,9 +29,9 @@ services:
     build: .
     container_name: cleanitup-worker
     environment:
-      - DATABASE_URL=sqlite:////app/db/prod.db
+      - DATABASE_URL=sqlite:////prod/db/cleanitup.db
     volumes:
-      - ./db:/app/db
+      - ./prod/db:/prod/db
     command: python worker.py
     restart: always
     depends_on:
@@ -45,6 +45,6 @@ services:
     ports:
       - 11434:11434
     volumes:
-      - ./ollama/ollama:/root/.ollama
+      - ./prod/ollama:/root/.ollama
     tty: true
     restart: always
