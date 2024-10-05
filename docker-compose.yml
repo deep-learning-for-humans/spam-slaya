@@ -16,8 +16,10 @@ services:
     container_name: cleanitup-webapp
     environment:
       - DATABASE_URL=sqlite:////prod/db/cleanitup.db
+      - GOOGLE_CLIENT_SECRET_PATH=/prod/client_secret.json
     volumes:
       - ./prod/db:/prod/db
+      - ./client_secret.json:/prod/client_secret.json
     restart: always
     command: python run.py
     depends_on:
