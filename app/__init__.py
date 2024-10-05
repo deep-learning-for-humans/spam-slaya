@@ -9,8 +9,10 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    print(f"db url: {Config.SQLALCHEMY_DATABASE_URI}")
+    print(f"client secrets path: {Config.CLIENT_SECRET_PATH}")
+
     # Initialize extensions
-    print(f"db url {Config.SQLALCHEMY_DATABASE_URI}")
     db.init_app(app)
 
     from .models import User, Run, RunBatch
