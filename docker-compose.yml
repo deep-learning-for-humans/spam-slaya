@@ -24,11 +24,11 @@ services:
     working_dir: /flask-app
     environment:
       DATABASE_URL: "sqlite:////flask-app/app.db"
-    command: >
-      sh -c "pip install -r requirements.txt && python worker.py"
+      OLLAMA_MODEL_NAME: "qwen2.5:3b-instruct-q4_0"
+    command: sh -c "./setup-worker.sh"
     depends_on:
       - redisserver
-      - flask
+      - ollama
 
   redisserver:
     image: redis:alpine
@@ -41,13 +41,10 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
-    command: ollama serve
-    volumes:
-      - ./models:/models  # Optional: mount a directory for models
-    command: >
-      sh -c "ollama pull qwen2.5:3b-instruct-q4_0"
-    environment:
-      - MODEL=qwen2.5:3b-instruct-q4_0
     ports:
       - "11434:11434"
+    expose:
+      - "11434"
+
     # Note: The environment variable above may vary depending on the Ollama setup.
+
