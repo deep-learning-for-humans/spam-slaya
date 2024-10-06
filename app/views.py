@@ -13,11 +13,16 @@ from googleapiclient.discovery import build
 
 import redis
 from rq import Queue
+from rq.job import Job
+from rq.exceptions import NoSuchJobError
+
+from ollama import Client as OllamaClient
 
 from . import db
 from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
-from .tasks import schedule_bg_run
+from .tasks import schedule_bg_run, bg_download_model
+
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -31,15 +36,36 @@ SCOPES = [
 redis_conn = redis.from_url(Config.RQ_BROKER_URL)
 q = Queue(connection=redis_conn)
 
+ollama = OllamaClient(host="http://localhost:11434")
 
 def register_routes(app):
     @app.route('/')
     def index():
+        list_response = ollama.list()
+        models = list_response['models']
+        has_required_model = any(model["name"] == Config.OLLAMA_MODEL for model in models)
+
+        if not has_required_model:
+            is_downloading = False
+            try:
+                job = Job.fetch("MODEL_DOWNLOAD", connection=redis_conn)
+                status = job.get_status(refresh=True)
+
+                if status == "started" or status == "queued" or status == "scheduled":
+                    is_downloading = True
+                else:
+                    is_downloading = False
+            except NoSuchJobError:
+                pass
+
+            if not is_downloading:
+                q.enqueue(bg_download_model, job_timeout='1h', job_id="MODEL_DOWNLOAD")
+
         user_id = session.get("user")
         if user_id:
             return redirect(url_for("home"))
 
-        return render_template("index.html")
+        return render_template("index.html", has_required_model=has_required_model)
 
     @app.route("/login")
     def login():

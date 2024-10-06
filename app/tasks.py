@@ -12,6 +12,8 @@ from googleapiclient.discovery import build
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
+from ollama import Client as OllamaClient
+
 from . import db
 from . import create_app
 from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
@@ -21,6 +23,12 @@ from .utils import email as email_utils, ai as ai_utils
 # redis_conn = redis.from_url(Config.RQ_BROKER_URL)
 redis_conn = Redis(host='redisserver', port=6379, db=0)
 q = Queue(connection=redis_conn)
+
+ollama = OllamaClient(host="http://localhost:11434")
+
+def bg_download_model():
+    ollama.pull(Config.OLLAMA_MODEL)
+
 
 """
 Does the due diligence and creates a Run object. Then enqueues a job to run in

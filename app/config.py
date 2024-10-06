@@ -8,3 +8,5 @@ class Config:
     RQ_BROKER_URL = os.environ.get('RQ_BROKER_URL') or 'redis://0.0.0.0:6379/0'
 
     CLIENT_SECRET_PATH = os.environ.get('GOOGLE_CLIENT_SECRET_PATH') or 'client_secret.json'
+
+    OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL") or "qwen2.5:3b-instruct-q4_0"

@@ -2,6 +2,12 @@
 
 {% block title %}Welcome{% endblock %}
 
+{% block meta %}
+{% if not has_required_model %}
+<meta http-equiv="refresh" content="5" >
+{% endif %}
+{% endblock %}
+
 {% block container_class %}container{% endblock %}
 {% block body %}
 
@@ -17,9 +23,13 @@
                     Research shows that 50% of emails belong to ads and spam. Connect your Gmail and witness the magic of a clean mailbox in
                     seconds.
                 </p>
+                {% if has_required_model %}
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                     <a href="/login" type="button" class="btn btn-primary btn-lg px-4 gap-3">Login with Gmail</a>
                 </div>
+                {% else %}
+                Download happening. This page will automatically refresh in 5s
+                {% endif %}
             </div>
         </div>
     </div>
