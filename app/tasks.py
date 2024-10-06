@@ -27,7 +27,9 @@ q = Queue(connection=redis_conn)
 ollama = OllamaClient(host="http://localhost:11434")
 
 def bg_download_model():
+    print(f"Pulling model: {Config.OLLAMA_MODEL}")
     ollama.pull(Config.OLLAMA_MODEL)
+    print(f"Pulling complete")
 
 
 """

@@ -11,6 +11,7 @@
 {% block container_class %}container{% endblock %}
 {% block body %}
 
+{% if has_required_model %}
 <div class="card border border-0 shadow-sm">
     <div class="card-body">
         <div class="px-4 py-5 my-2 text-center">
@@ -23,16 +24,54 @@
                     Research shows that 50% of emails belong to ads and spam. Connect your Gmail and witness the magic of a clean mailbox in
                     seconds.
                 </p>
-                {% if has_required_model %}
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                     <a href="/login" type="button" class="btn btn-primary btn-lg px-4 gap-3">Login with Gmail</a>
                 </div>
-                {% else %}
-                Download happening. This page will automatically refresh in 5s
-                {% endif %}
             </div>
         </div>
     </div>
 </div>
+{% else %}
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="text-center mb-3">
+            <div class="d-block mx-auto mb-2 fs-1">
+                <i class="bi-trash3"></i>
+            </div>
+            <h1 class="display-5 fw-bold text-body-emphasis">Clean that up!</h1>
+        </div>
 
+        <div class="card text-center shadow-sm">
+            <div class="card-header">Downloading LLM</div>
+            <div class="card-body">
+                <p class="lead mb-0">
+                    We are downloading a Large Language Model in the background. Once
+                    this is done, you can login to Gmail and proceed
+                </p>
+            </div>
+            <div class="card-footer text-small text-body-secondary">
+                Checking download status in <span id="seconds-left"></span> seconds
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+<script>
+    $(function(){
+        $("#seconds-left").text(5);
+
+        setInterval(() => {
+            const secondsLeft = parseInt($("#seconds-left").text());
+            if (secondsLeft > 0) {
+                $("#seconds-left").text(secondsLeft - 1);
+            }
+        }, 1000);
+    })
+</script>
 {% endblock %}
