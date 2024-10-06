@@ -23,6 +23,7 @@ services:
     restart: always
     command: python run.py
     depends_on:
+      - ollama
       - redisserver
     ports:
       - "8080:8080"
