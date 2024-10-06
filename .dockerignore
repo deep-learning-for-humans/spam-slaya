@@ -1,5 +1,8 @@
 # Project specific
 
+## Ignore prod folder (which is used for volume mapping)
+prod/
+
 ## Ignore client secret if any
 client_secret.json
 
