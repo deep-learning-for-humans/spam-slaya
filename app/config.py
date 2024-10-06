@@ -9,4 +9,5 @@ class Config:
 
     CLIENT_SECRET_PATH = os.environ.get('GOOGLE_CLIENT_SECRET_PATH') or 'client_secret.json'
 
+    OLLAMA_URL = os.environ.get("OLLAMA_URL") or "http://localhost:11434"
     OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL") or "qwen2.5:3b-instruct-q4_0"

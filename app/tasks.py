@@ -20,11 +20,10 @@ from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
 from .utils import email as email_utils, ai as ai_utils
 
-# redis_conn = redis.from_url(Config.RQ_BROKER_URL)
-redis_conn = Redis(host='redisserver', port=6379, db=0)
+redis_conn = Redis.from_url(Config.RQ_BROKER_URL)
 q = Queue(connection=redis_conn)
 
-ollama = OllamaClient(host="http://localhost:11434")
+ollama = OllamaClient(host=Config.OLLAMA_URL)
 
 def bg_download_model():
     print(f"Pulling model: {Config.OLLAMA_MODEL}")

@@ -11,7 +11,7 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
-import redis
+from redis import Redis
 from rq import Queue
 from rq.job import Job
 from rq.exceptions import NoSuchJobError
@@ -33,10 +33,10 @@ SCOPES = [
     "openid"
 ]
 
-redis_conn = redis.from_url(Config.RQ_BROKER_URL)
+redis_conn = Redis.from_url(Config.RQ_BROKER_URL)
 q = Queue(connection=redis_conn)
 
-ollama = OllamaClient(host="http://localhost:11434")
+ollama = OllamaClient(host=Config.OLLAMA_URL)
 
 def register_routes(app):
     @app.route('/')
