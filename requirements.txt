@@ -18,7 +18,6 @@ click-didyoumean==0.3.1
 click-plugins==1.1.1
 click-repl==0.3.0
 colorama==0.4.6
-Delorean==1.0.0
 distro==1.9.0
 docstring_parser==0.16
 Flask==3.0.3
@@ -47,6 +46,7 @@ MarkupSafe==2.1.5
 mdurl==0.1.2
 multidict==6.0.5
 oauthlib==3.2.2
+ollama==0.3.3
 openai==1.43.0
 prompt_toolkit==3.0.47
 proto-plus==1.24.0
