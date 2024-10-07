@@ -2,6 +2,8 @@ import instructor
 from openai import OpenAI
 from pydantic import BaseModel
 
+from ..config import Config
+
 PROMPT = """You are an advanced email classification model. Your task is to analyze email content and determine whether to DELETE or KEEP the email based on its content, source, and purpose.
 
 **Criteria for DELETE:**  
@@ -41,7 +43,7 @@ class MailAction(BaseModel):
 def infer_email_type(user_msg):
     client = instructor.from_openai(
         OpenAI(
-            base_url="http://ollama:11434/v1",
+            base_url=f"{Config.OLLAMA_URL}/v1",
             api_key="DUMMY"
             ),
         mode=instructor.Mode.JSON,
