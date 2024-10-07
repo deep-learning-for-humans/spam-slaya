@@ -106,3 +106,4 @@
 - [X] Create background job to get emails
 - [ ] Write status page
 - [ ] Wire in LLM logic (Rags)
+- [ ] Add label to the emails deleted, so that one can filter these emails in trash
