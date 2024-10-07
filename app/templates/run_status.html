@@ -2,12 +2,6 @@
 
 {% block title %}Run Status{% endblock %}
 
-{% block meta %}
-{% if model.run.status.value == "QUEUED" or model.run.status.value == "PROCESSING" %}
-<meta http-equiv="refresh" content="5" >
-{% endif %}
-{% endblock %}
-
 {% block container_class %}container-fluid{% endblock %}
 {% block body %}
 
@@ -60,9 +54,9 @@
                     </tbody>
                 </table>
 
-                {% if model.run.status.value == "QUEUED" or model.run.status.value == "PROCESSING" %}
+                {% if model.page_should_refresh %}
                 <div class="alert alert-info" role="alert">
-                    This page auto refreshes in <span id="seconds-left"></span> seconds
+                    Auto refreshing in <span id="seconds-left"></span> seconds
                 </div>
                 {% endif %}
 
@@ -73,6 +67,13 @@
                     the classification. If you find an important email marked as
                     delete here, please go to your trash and recover it.
                 </p>
+
+                {% if model.page_should_refresh %}
+                <div class="d-grid">
+                    <a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#danger-zone-modal">Danger Zone</a>
+                </div>
+                {% endif %}
+
             </div>
         </div>
     </div>
@@ -128,25 +129,87 @@
     </div>
 </div>
 
+<div id="danger-zone-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Danger Zone</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>
+            There are edge cases where the job that was processing in the
+            background could have failed. In such cases, scheduling another
+            clean up job is not allowed. If you are certain that the job has
+            failed, then you can mark the job as <code>DONE WITH ERRORS</code>
+            here, and then you can schedule another job from the home page.
+        </p>
+        <p>
+            Proceed with caution. Don't tell us that we didn't warn you before.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <form action="/abandon-run" method="POST">
+            <input type="hidden" name="run_id" value="{{ model.run.id }}">
+            <button class="btn px-4 btn-danger" type="submit">
+                <i class="bi-file-earmark-x-fill"></i>
+                Mark job as done with errors
+            </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 <script>
-    $(function(){
-        $("#seconds-left").text(5);
-        $("#show-filter-select").val("{{ model.show_filter_value }}")
+    const REFRESH_TIME_IN_SECONDS = 10;
+    let PAUSE_TIMER = false;
 
+    function activate(){
+        $("#seconds-left").text(REFRESH_TIME_IN_SECONDS);
+        $("#show-filter-select").val("{{ model.show_filter_value }}")
+    }
+
+    function bindEvents(){
         $("#show-filter-select").change(function(){
             $("#show-filter-form").submit();
         })
 
+        $("#danger-zone-modal").on("shown.bs.modal", function(){
+            PAUSE_TIMER = true;
+        });
+
+        $("#danger-zone-modal").on("hidden.bs.modal", function(){
+            PAUSE_TIMER = false;
+        });
+
+        {% if model.page_should_refresh %}
         setInterval(() => {
+
+            if (PAUSE_TIMER) {
+                return;
+            }
+
             const secondsLeft = parseInt($("#seconds-left").text());
-            if (secondsLeft > 0) {
+            if (secondsLeft > 1) {
                 $("#seconds-left").text(secondsLeft - 1);
+            } 
+            else {
+                window.location.reload();
             }
         }, 1000);
+        {% endif %}
+    }
+
+    $(function(){
+        activate();
+        bindEvents();
+
+
     })
 </script>
 {% endblock %}

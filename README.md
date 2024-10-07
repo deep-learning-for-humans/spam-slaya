@@ -107,7 +107,7 @@
 - [X] Write status page
 - [X] Wire in LLM logic (Rags)
 - [X] Docker compose
-- [ ] Handle workers gracefully
+- [X] Handle workers gracefully
 - [ ] Limit message processing to 500 at a time
 - [ ] Documentation for "running the project"
 - [ ] Add label to the emails deleted, so that one can filter these emails in trash

@@ -149,7 +149,8 @@ def register_routes(app):
         email_address = user_profile.get("emailAddress", None)
 
         runs = Run.query.filter_by(user_id = user_id).order_by(Run.scheduled_at.desc())
-        runs_in_process = Run.query.filter(
+
+        has_runs_in_process = Run.query.filter(
             Run.user_id == user.id,
             Run.status != RunStatusEnum.DONE,
             Run.status != RunStatusEnum.DONE_WITH_ERRORS
@@ -158,7 +159,7 @@ def register_routes(app):
         return render_template("home.html",
                                runs=runs,
                                total_messages=total_messages,
-                               runs_in_process=runs_in_process,
+                               runs_in_process=has_runs_in_process,
                                email_address=email_address)
 
     @app.route("/schedule-run", methods=["POST"])
@@ -225,6 +226,7 @@ def register_routes(app):
         if not run:
             return abort(404)
 
+        page_should_refresh = (run.status.value == "QUEUED" or run.status.value == "PROCESSING")
 
         run_batches = RunBatch.query.filter_by(run_id = run.id)
 
@@ -258,5 +260,42 @@ def register_routes(app):
             "error_count": message_error_count,
             "delete_count": message_delete_count,
             "batch_results": run_batches,
-            "show_filter_value": show
+            "show_filter_value": show,
+            "page_should_refresh": page_should_refresh
         })
+
+
+    @app.route("/abandon-run", methods=["POST"])
+    def abandon_run():
+        user_id = session.get("user")
+
+        if not user_id:
+            print("no user_id. Redirecting to login")
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user or not user.gmail_credentials:
+            # use flash here
+            print("no user or no gmail creds. Redirecting to login")
+            return redirect(url_for("login"))
+
+        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
+            # credentials have expired. Flash this
+            print("Credentials expired. Redirecting to login")
+            return redirect(url_for("login"))
+
+        run_id = request.form.get("run_id", None)
+        if not run_id:
+            flash("Missing required input - Run ID")
+            return redirect(url_for("home"))
+
+        run = Run.query.get(uuid.UUID(run_id))
+        run.ended_at = datetime.datetime.utcnow()
+        run.status = RunStatusEnum.DONE_WITH_ERRORS
+
+        db.session.add(run)
+        db.session.commit()
+
+        flash("Run has been marked as DONE WITH ERRORS. You can now schedule another run")
+        return redirect(url_for("home"))
