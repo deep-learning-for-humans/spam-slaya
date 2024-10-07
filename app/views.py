@@ -263,3 +263,39 @@ def register_routes(app):
             "show_filter_value": show,
             "page_should_refresh": page_should_refresh
         })
+
+
+    @app.route("/abandon-run", methods=["POST"])
+    def abandon_run():
+        user_id = session.get("user")
+
+        if not user_id:
+            print("no user_id. Redirecting to login")
+            return redirect(url_for("login"))
+
+        user = User.query.filter_by(id=user_id).first()
+
+        if not user or not user.gmail_credentials:
+            # use flash here
+            print("no user or no gmail creds. Redirecting to login")
+            return redirect(url_for("login"))
+
+        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
+            # credentials have expired. Flash this
+            print("Credentials expired. Redirecting to login")
+            return redirect(url_for("login"))
+
+        run_id = request.form.get("run_id", None)
+        if not run_id:
+            flash("Missing required input - Run ID")
+            return redirect(url_for("home"))
+
+        run = Run.query.get(uuid.UUID(run_id))
+        run.ended_at = datetime.datetime.utcnow()
+        run.status = RunStatusEnum.DONE_WITH_ERRORS
+
+        db.session.add(run)
+        db.session.commit()
+
+        flash("Run has been marked as DONE WITH ERRORS. You can now schedule another run")
+        return redirect(url_for("home"))

@@ -149,7 +149,8 @@
         </p>
       </div>
       <div class="modal-footer">
-        <form id="schedule-run-form" action="/schedule-run" method="POST">
+        <form action="/abandon-run" method="POST">
+            <input type="hidden" name="run_id" value="{{ model.run.id }}">
             <button class="btn px-4 btn-danger" type="submit">
                 <i class="bi-file-earmark-x-fill"></i>
                 Mark job as done with errors
