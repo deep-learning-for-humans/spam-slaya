@@ -226,6 +226,7 @@ def register_routes(app):
         if not run:
             return abort(404)
 
+        page_should_refresh = (run.status.value == "QUEUED" or run.status.value == "PROCESSING")
 
         run_batches = RunBatch.query.filter_by(run_id = run.id)
 
@@ -259,5 +260,6 @@ def register_routes(app):
             "error_count": message_error_count,
             "delete_count": message_delete_count,
             "batch_results": run_batches,
-            "show_filter_value": show
+            "show_filter_value": show,
+            "page_should_refresh": page_should_refresh
         })
