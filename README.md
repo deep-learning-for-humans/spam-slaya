@@ -104,6 +104,10 @@
 - [X] Get user ID from Gmail via oauth and store in DB
 - [X] Store Open API Key in SQLite 
 - [X] Create background job to get emails
-- [ ] Write status page
-- [ ] Wire in LLM logic (Rags)
+- [X] Write status page
+- [X] Wire in LLM logic (Rags)
+- [ ] Docker compose
+- [ ] Handle workers gracefully
+- [ ] Limit message processing to 500 at a time
+- [ ] Documentation for "running the project"
 - [ ] Add label to the emails deleted, so that one can filter these emails in trash
