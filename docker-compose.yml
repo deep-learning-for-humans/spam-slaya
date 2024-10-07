@@ -1,19 +1,65 @@
-version: '3.8'
-
 services:
+
+  redisserver:
+    image: redis:alpine
+    container_name: cleanitup-redis
+    restart: always
+    expose:
+      - "6379"
+    networks:
+      - internal
+
   webapp:
     build: .
-    ports:
-      - "5000:5000"
+    container_name: cleanitup-webapp
     environment:
-      - FLASK_ENV=production
+      - DATABASE_URL=sqlite:////prod/db/cleanitup.db
+      - GOOGLE_CLIENT_SECRET_PATH=/prod/client_secret.json
+      - RQ_BROKER_URL=redis://cleanitup-redis:6379/0
+      - OLLAMA_URL=http://cleanitup-ollama:11434
+    volumes:
+      - ./prod/db:/prod/db
+      - ./client_secret.json:/prod/client_secret.json
+    restart: always
     command: python run.py
+    depends_on:
+      - ollama
+      - redisserver
+    ports:
+      - "8080:8080"
+    networks:
+      - default
+      - internal
 
   worker:
     build: .
+    container_name: cleanitup-worker
+    environment:
+      - DATABASE_URL=sqlite:////prod/db/cleanitup.db
+      - RQ_BROKER_URL=redis://cleanitup-redis:6379/0
+      - OLLAMA_URL=http://cleanitup-ollama:11434
+    volumes:
+      - ./prod/db:/prod/db
     command: python worker.py
+    restart: always
+    depends_on:
+      - ollama
+      - redisserver
+      - webapp
+    networks:
+      - internal
 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cleanitup-ollama
+    expose:
+      - "11434"
+    volumes:
+      - ./prod/ollama:/root/.ollama
+    tty: true
+    restart: always
+    networks:
+      - internal
+
+networks:
+  internal:

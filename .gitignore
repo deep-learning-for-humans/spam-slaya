@@ -1,3 +1,6 @@
+# Ignore directory that is used as volume mount inside docker
+prod/
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,windows,macos,linux,pycharm+all
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,windows,macos,linux,pycharm+all
 

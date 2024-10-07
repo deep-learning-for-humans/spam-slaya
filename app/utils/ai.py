@@ -41,7 +41,7 @@ class MailAction(BaseModel):
 def infer_email_type(user_msg):
     client = instructor.from_openai(
         OpenAI(
-            base_url="http://localhost:11434/v1",
+            base_url="http://ollama:11434/v1",
             api_key="DUMMY"
             ),
         mode=instructor.Mode.JSON,
