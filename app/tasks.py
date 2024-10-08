@@ -15,7 +15,6 @@ from sqlalchemy.orm import Session
 from ollama import Client as OllamaClient
 
 from . import db
-from . import create_app
 from .models import User, Run, RunBatch, RunStatusEnum, MessageActionEnum
 from .config import Config
 from .utils import email as email_utils, ai as ai_utils
