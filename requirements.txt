@@ -30,6 +30,7 @@ google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
 googleapis-common-protos==1.63.2
 greenlet==3.1.0
+gunicorn==23.0.0
 h11==0.14.0
 httpcore==1.0.5
 httplib2==0.22.0
@@ -48,6 +49,7 @@ multidict==6.0.5
 oauthlib==3.2.2
 ollama==0.3.3
 openai==1.43.0
+packaging==24.1
 prompt_toolkit==3.0.47
 proto-plus==1.24.0
 protobuf==5.27.3

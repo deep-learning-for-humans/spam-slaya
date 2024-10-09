@@ -21,7 +21,7 @@ services:
       - ./prod/db:/prod/db
       - ./client_secret.json:/prod/client_secret.json
     restart: always
-    command: python run.py
+    command: gunicorn -w 2 -b 0.0.0.0:8080 'app:create_app()'
     depends_on:
       - ollama
       - redisserver
