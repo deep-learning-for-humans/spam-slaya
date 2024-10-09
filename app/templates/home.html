@@ -105,15 +105,15 @@
       <div class="modal-body">
         <p>
             You have <b>{{ total_messages }}</b> messages in your inbox.
-            Processing might take a long time. If you want to process lesser
-            number of emails, please change the textbox below to reflect the
-            number of messages you wish to process
+        </p>
+        <p>
+            To keep processing predictable, we have set a limit of 500 records
+            per schedule. This is the max that you will be able to process at
+            a time. If you wish to process lesser records than 500, use the
+            textbox below to reflect the number of messages you wish to process
         </p>
         <label for="messages-to-process-textbox" class="form-label">No. of messages to process</label>
-        <input form="schedule-run-form" type="text" class="form-control" id="messages-to-process-textbox" name="no_of_emails_to_process" value="{{ total_messages }}" required>
-        <div class="form-text">
-            If you wish to process more than 500 emails, the count should be a multiple of 500 (or it will be rounded up). For less than 500 emails, the count can be anything.
-        </div>
+        <input form="schedule-run-form" type="number" class="form-control" id="messages-to-process-textbox" name="no_of_emails_to_process" value="{{ emails_to_process }}" required max="500">
       </div>
       <div class="modal-footer">
         <form id="schedule-run-form" action="/schedule-run" method="POST">
