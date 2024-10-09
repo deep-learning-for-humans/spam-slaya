@@ -109,7 +109,7 @@
 - [X] Docker compose
 - [X] Handle workers gracefully
 - [ ] Normalize the environment variables with a prefix
-- [ ] Run flask in production mode inside docker (currently runs in dev)
+- [X] Run flask in production mode inside docker (currently runs in dev)
 - [ ] Limit message processing to 500 at a time
 - [ ] Documentation for "running the project"
 - [ ] Add label to the emails deleted, so that one can filter these emails in trash
