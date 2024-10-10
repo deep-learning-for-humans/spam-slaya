@@ -150,8 +150,11 @@ We highly recommend that you read through the code, to make sure that you unders
 - [X] Wire in LLM logic (Rags)
 - [X] Docker compose
 - [X] Handle workers gracefully
-- [ ] Normalize the environment variables with a prefix
 - [X] Run flask in production mode inside docker (currently runs in dev)
 - [X] Limit message processing to 500 at a time
+- [X] Move to `deep learning for humans`
+- [ ] Change name
+- [ ] Normalize the environment variables with a prefix
 - [ ] Documentation for "running the project"
 - [ ] Add label to the emails deleted, so that one can filter these emails in trash
+- [ ] Remove `client_secret.json` and purge it from git. Rotate creds
