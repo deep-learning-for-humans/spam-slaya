@@ -18,7 +18,7 @@ To get started with this, we will need to generate credentials that will allow u
 
 ### Caveat with Google Credentials
 
-Because of Google’s restrictions on who can get access to email inboxes (very rightfully so), we decided that we will never be a “verified” application. Verification by Google is a long drawn process that involves multiple hoops to jump through (and keep jumping through year after year). 
+Because of Google’s restrictions on who can get access to email inboxes (very rightfully so), we decided that we will never be a "verified" application. Verification by Google is a long drawn process that involves multiple hoops to jump through (and keep jumping through year after year). 
 
 We have thoroughly detailed the steps that need to be followed in the link below that will allow you to generate your Google Credentials. For each credential you generate, up to 100 people can be added to it. We recommend that you use this only for very close friends and family.
 
@@ -26,7 +26,7 @@ We have thoroughly detailed the steps that need to be followed in the link below
 
 #### Problem
 
-Because the problem statement of trying to clear out our inboxes is such a privacy sensitive one, it would be a rather time taking process for a side project to go through the crazy hoops of getting “verified” so that we can offer this as a service. 
+Because the problem statement of trying to clear out our inboxes is such a privacy sensitive one, it would be a rather time taking process for a side project to go through the crazy hoops of getting "verified" so that we can offer this as a service. 
 
 The middle ground would be to make this as simple as we can, to run this project locally or for your loved ones. 
 
@@ -66,14 +66,14 @@ This process does not need you to add a billing account
 
 4. At this stage, go to the [API Library](https://console.cloud.google.com/apis/library). This is where we will enable the APIs required.
 5. The API we are interested in and need access to, is the Gmail API. You can access this via the [direct link too](https://console.cloud.google.com/apis/library/gmail.googleapis.com).
-6. Click “Enable” to enable this API for the project. Once you enable it, it will take you to a API/Service details page which will show you usage of this API
-7. Now we must generate credentials. To do so, click on the “Credentials” tab, or use [this link](https://console.cloud.google.com/apis/api/gmail.googleapis.com/credentials).
+6. Click "Enable" to enable this API for the project. Once you enable it, it will take you to a API/Service details page which will show you usage of this API
+7. Now we must generate credentials. To do so, click on the "Credentials" tab, or use [this link](https://console.cloud.google.com/apis/api/gmail.googleapis.com/credentials).
 8. Before we generate the credentials, we must finish answering a few questions for OAuth as part of the OAuth consent screen. To start this, click the "Configure consent screen" button or use [this link](https://console.cloud.google.com/apis/credentials/consent).
-  - Choose “External” for user type and hit “Create”
-  - Give your app a name. I used “Clean it up”. And give an email address, I used mine. Skip everything else on this page except the *Developer contact information* at the end, where again I gave my email.
-  - Hit “Save and continue”
-  - In the “Scopes” screen, Do the following by clicking “Add or remove scopes” button
-    - Search for “Gmail API” in the filter box
+  - Choose "External" for user type and hit "Create"
+  - Give your app a name. I used "Clean it up". And give an email address, I used mine. Skip everything else on this page except the *Developer contact information* at the end, where again I gave my email.
+  - Hit "Save and continue"
+  - In the "Scopes" screen, Do the following by clicking "Add or remove scopes" button
+    - Search for "Gmail API" in the filter box
     - Select scope `https://mail.google.com/` that allows for *Read, compose, send and permanently delete all your email from Gmail*
     - Select scope `.../auth/gmail.readonly` that allows for *View your email messages and setting*s
     - Select scope `.../auth/gmail.labels` that allows for *See and edit your email labels*
@@ -88,15 +88,15 @@ This process does not need you to add a billing account
   </tbody>
 </table>
 
-9. On the “Test users” page, is where you add your email and the email of the loved ones that you want to give access to this, to. You can give 100 people access. The idea is that this project will forever remain in “test mode” and never get out of it. Thus you being the administrator, can control who gets access to this app, simply by adding or removing them from this page. 
-10. Once that is done, hit “Save and continue” and this will show you a summary. Hit “Back to dashboard”. We are now ready to create the credentials. 
-11. Go back to the [“Gmail API API/Service details page”](https://console.cloud.google.com/apis/api/gmail.googleapis.com/credentials) and hit the “create credentials” button and select “OAuth Client ID”.
-12. In the page that comes up, select “Web application” and name it. Under “Authorised redirect URIs” enter the redirect URI
+9. On the "Test users" page, is where you add your email and the email of the loved ones that you want to give access to this, to. You can give 100 people access. The idea is that this project will forever remain in "test mode" and never get out of it. Thus you being the administrator, can control who gets access to this app, simply by adding or removing them from this page. 
+10. Once that is done, hit "Save and continue" and this will show you a summary. Hit "Back to dashboard". We are now ready to create the credentials. 
+11. Go back to the ["Gmail API API/Service details page"](https://console.cloud.google.com/apis/api/gmail.googleapis.com/credentials) and hit the "create credentials" button and select "OAuth Client ID".
+12. In the page that comes up, select "Web application" and name it. Under "Authorised redirect URIs" enter the redirect URI
     - If you are hosting this locally, it can be something like `http://localhost:8080/oauth2callback`
     - If you are hosting this for others to be used, the starting part of the URI will change but it has to end with `/oauth2callback`. We recommend using HTTPS (via caddy) to ease your deployment out.
-13. Once that is done, hit “Create” and it will present you with a popup with your credentials
+13. Once that is done, hit "Create" and it will present you with a popup with your credentials
     - On this screen, you are presented with the credentials required to use the app.
-    - Hit “Download JSON” and save this json to a place of your choice.
+    - Hit "Download JSON" and save this json to a place of your choice.
 
 <table>
   <tbody>
