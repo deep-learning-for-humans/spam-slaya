@@ -37,13 +37,17 @@ This starts with having to get your own OAuth2 credentials (sorry).
 This process does not need you to add a billing account
 
 1. To start off, go to the [Google Cloud Console](https://console.cloud.google.com) and login with your gmail account 
-2. Start by [create a project](https://console.cloud.google.com/projectcreate). Give it a meaningful name. This will be the place where you will have to generate the credentials to use this. I have chosen to name mine as "clean it up"
+2. Start by [create a project](https://console.cloud.google.com/projectcreate). Give it a meaningful name. This will be the place where you will have to generate the credentials to use this. I have chosen to name mine as "clean it up". Once it has created, select that project
 
 <table>
   <tbody>
     <tr>
-      <td></td>
-      <td></td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/166f6f41-7401-4589-897d-069fcc7e8a03" />
+      </td>
+      <td>
+          <img src="https://github.com/user-attachments/assets/4551bc9e-ee09-4af6-94f1-44c393393cd1" />
+      </td>
     </tr>
   </tbody>
 </table>
@@ -53,8 +57,9 @@ This process does not need you to add a billing account
 <table>
   <tbody>
     <tr>
-      <td></td>
-      <td></td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/f98f4657-58d7-48dd-a971-e8cf03979068" />
+      </td>
     </tr>
   </tbody>
 </table>
@@ -76,8 +81,9 @@ This process does not need you to add a billing account
 <table>
   <tbody>
     <tr>
-      <td></td>
-      <td></td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/11eeb4ee-dd68-427b-abfa-7197cf236a96" />
+      </td>
     </tr>
   </tbody>
 </table>
@@ -95,8 +101,9 @@ This process does not need you to add a billing account
 <table>
   <tbody>
     <tr>
-      <td></td>
-      <td></td>
+      <td>
+        <img src="https://github.com/user-attachments/assets/f97de02a-0bb4-4532-b264-8effa73016a6" />
+      </td>
     </tr>
   </tbody>
 </table>
@@ -112,8 +119,9 @@ This process does not need you to add a billing account
   <table>
     <tbody>
       <tr>
-        <td></td>
-        <td></td>
+        <td>
+          <img src="https://github.com/user-attachments/assets/b14c0a08-0585-4a44-b946-07ff79cbae78" />
+        </td>
       </tr>
     </tbody>
   </table>
