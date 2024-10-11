@@ -60,6 +60,7 @@ pydantic_core==2.20.1
 Pygments==2.18.0
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
 pytz==2024.2
 redis==5.0.8
 requests==2.32.3
