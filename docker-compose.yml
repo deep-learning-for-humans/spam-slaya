@@ -40,6 +40,7 @@ services:
       - SPAM_SLAYA_RQ_BROKER_URL=redis://spamslaya-redis:6379/0
       - SPAM_SLAYA_OLLAMA_URL=http://spamslaya-ollama:11434
       - SPAM_SLAYA_OLLAMA_MODEL=qwen2.5:3b-instruct-q4_0
+      - SPAM_SLAYA_OLLAMA_API_KEY=dummy
     volumes:
       - ./prod/db:/prod/db
     command: python worker.py
