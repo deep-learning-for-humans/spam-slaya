@@ -1,5 +1,8 @@
 # Project specific
 
+## Ignore .env file (only for development)
+.env
+
 ## Ignore prod folder (which is used for volume mapping)
 prod/
 

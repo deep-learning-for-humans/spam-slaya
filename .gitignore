@@ -1,3 +1,6 @@
+# Ignore .env file (specific to each dev's machine)
+.env
+
 # Ignore directory that is used as volume mount inside docker
 prod/
 
