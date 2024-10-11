@@ -4,7 +4,7 @@
 
 In today's digital world, your email address is a key part of your identity. Yet, giving it out can feel like opening the floodgates to spam and unwanted clutter. Before you know it, your inbox is overflowing, leaving you overwhelmed and missing important messages. 
 
-**Clean that up** rose out of this personal itch that our Gmail inboxes are bloated and the search for how to clean them up.
+**Spam Slaya** (yes, not _slayer_ but _slaya_) rose out of this personal itch that our Gmail inboxes are bloated and the search for how to clean them up.
 
 ## Solution
 
@@ -34,7 +34,8 @@ This starts with having to get your own OAuth2 credentials (sorry).
 
 #### Process
 
-This process does not need you to add a billing account
+> [!IMPORTANT]  
+> This process does not need you to add a billing account
 
 1. To start off, go to the [Google Cloud Console](https://console.cloud.google.com) and login with your gmail account 
 2. Start by [create a project](https://console.cloud.google.com/projectcreate). Give it a meaningful name. This will be the place where you will have to generate the credentials to use this. I have chosen to name mine as "clean it up". Once it has created, select that project
@@ -69,14 +70,14 @@ This process does not need you to add a billing account
 6. Click "Enable" to enable this API for the project. Once you enable it, it will take you to a API/Service details page which will show you usage of this API
 7. Now we must generate credentials. To do so, click on the "Credentials" tab, or use [this link](https://console.cloud.google.com/apis/api/gmail.googleapis.com/credentials).
 8. Before we generate the credentials, we must finish answering a few questions for OAuth as part of the OAuth consent screen. To start this, click the "Configure consent screen" button or use [this link](https://console.cloud.google.com/apis/credentials/consent).
-  - Choose "External" for user type and hit "Create"
-  - Give your app a name. I used "Clean it up". And give an email address, I used mine. Skip everything else on this page except the *Developer contact information* at the end, where again I gave my email.
-  - Hit "Save and continue"
-  - In the "Scopes" screen, Do the following by clicking "Add or remove scopes" button
-    - Search for "Gmail API" in the filter box
-    - Select scope `https://mail.google.com/` that allows for *Read, compose, send and permanently delete all your email from Gmail*
-    - Select scope `.../auth/gmail.readonly` that allows for *View your email messages and setting*s
-    - Select scope `.../auth/gmail.labels` that allows for *See and edit your email labels*
+    - Choose "External" for user type and hit "Create"
+    - Give your app a name. I used "Clean it up". And give an email address, I used mine. Skip everything else on this page except the *Developer contact information* at the end, where again I gave my email.
+    - Hit "Save and continue"
+    - In the "Scopes" screen, Do the following by clicking "Add or remove scopes" button
+      - Search for "Gmail API" in the filter box
+      - Select scope `https://mail.google.com/` that allows for *Read, compose, send and permanently delete all your email from Gmail*
+      - Select scope `.../auth/gmail.readonly` that allows for *View your email messages and setting*s
+      - Select scope `.../auth/gmail.labels` that allows for *See and edit your email labels*
 
 <table>
   <tbody>
@@ -128,6 +129,26 @@ This process does not need you to add a billing account
 
 </details>
 
+# Running the project
+
+- Install docker. We required version 2 and up.
+- Generate the google credentials and download your `client_secret.json`
+  - We are sorry about this, again.
+- Clone the project (with git or https)
+- Check the `docker-compose.yml` file and customize the variables in `environment` as per your needs
+  - There are some defaults here, and these are the defaults we have used.
+- Run `docker compose up` to start all the services 
+- Visit `http://localhost:8080` to start using the app
+
+**Dry run**
+
+There is a method to dry run the entire application and we highly recommend you
+run it in this mode first. That way you get a "feel" for the entire operation
+and then you can run it without the dry run. 
+
+To dry run the application, set the `SPAM_SLAYA_DRY_RUN` environment variable to
+`TRUE` and emails will be processed as per usual, but no deletes will happen
+
 ### The LLM
 
 At this point, based on our testing, we have identified that the `qwen2.5:3b-instruct-q4_0` works with a high degree of confidence. In addition, to avoid *sending* your data to anyone, we have chosen to run this via a locally running Ollama server. By our calculations, this should take, on average, a time of 40s - 60s per inference.
@@ -136,7 +157,8 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 
 # Note
 
-We highly recommend that you read through the code, to make sure that you understand what we are doing with your data. We don’t send this information back to ourselves (there is no hosted instance anywhere). We wrote this, to solve OUR problem, and we hope that it helps solve yours too.
+- We highly recommend that you read through the code, to make sure that you understand what we are doing with your data. We don’t send this information back to ourselves (there is no hosted instance anywhere). We wrote this, to solve OUR problem, and we hope that it helps solve yours too.
+- The first time, we have to download the LLM. This will take some time to get (the file is about 1.7GB so it will take some time depending on your internet connection)
 
 # TODO
 
