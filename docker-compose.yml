@@ -2,7 +2,7 @@ services:
 
   redisserver:
     image: redis:alpine
-    container_name: cleanitup-redis
+    container_name: spamslaya-redis
     restart: always
     expose:
       - "6379"
@@ -11,12 +11,12 @@ services:
 
   webapp:
     build: .
-    container_name: cleanitup-webapp
+    container_name: spamslaya-webapp
     environment:
-      - DATABASE_URL=sqlite:////prod/db/cleanitup.db
+      - DATABASE_URL=sqlite:////prod/db/spamslaya.db
       - GOOGLE_CLIENT_SECRET_PATH=/prod/client_secret.json
-      - RQ_BROKER_URL=redis://cleanitup-redis:6379/0
-      - OLLAMA_URL=http://cleanitup-ollama:11434
+      - RQ_BROKER_URL=redis://spamslaya-redis:6379/0
+      - OLLAMA_URL=http://spamslaya-ollama:11434
     volumes:
       - ./prod/db:/prod/db
       - ./client_secret.json:/prod/client_secret.json
@@ -33,11 +33,11 @@ services:
 
   worker:
     build: .
-    container_name: cleanitup-worker
+    container_name: spamslaya-worker
     environment:
-      - DATABASE_URL=sqlite:////prod/db/cleanitup.db
-      - RQ_BROKER_URL=redis://cleanitup-redis:6379/0
-      - OLLAMA_URL=http://cleanitup-ollama:11434
+      - DATABASE_URL=sqlite:////prod/db/spamslaya.db
+      - RQ_BROKER_URL=redis://spamslaya-redis:6379/0
+      - OLLAMA_URL=http://spamslaya-ollama:11434
     volumes:
       - ./prod/db:/prod/db
     command: python worker.py
@@ -51,7 +51,7 @@ services:
 
   ollama:
     image: ollama/ollama:latest
-    container_name: cleanitup-ollama
+    container_name: spamslaya-ollama
     expose:
       - "11434"
     volumes:
