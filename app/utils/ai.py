@@ -44,7 +44,7 @@ def infer_email_type(user_msg):
     client = instructor.from_openai(
         OpenAI(
             base_url=f"{Config.OLLAMA_URL}/v1",
-            api_key="DUMMY"
+            api_key=Config.OLLAMA_API_KEY
             ),
         mode=instructor.Mode.JSON,
     )
