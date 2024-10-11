@@ -186,4 +186,4 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [X] Documentation for "running the project"
 - [X] Add label to the emails deleted, so that one can filter these emails in trash
 - [ ] Remove `client_secret.json` and purge it from git. Rotate creds
-- [ ] Add a short video of the entire flow of the app
+- [X] Add a short video of the entire flow of the app
