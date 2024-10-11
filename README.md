@@ -153,7 +153,7 @@ We highly recommend that you read through the code, to make sure that you unders
 - [X] Run flask in production mode inside docker (currently runs in dev)
 - [X] Limit message processing to 500 at a time
 - [X] Move to `deep learning for humans`
-- [ ] Change name
+- [X] Change name
 - [ ] Normalize the environment variables with a prefix
 - [ ] Documentation for "running the project"
 - [ ] Add label to the emails deleted, so that one can filter these emails in trash
