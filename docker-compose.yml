@@ -13,10 +13,11 @@ services:
     build: .
     container_name: spamslaya-webapp
     environment:
-      - DATABASE_URL=sqlite:////prod/db/spamslaya.db
-      - GOOGLE_CLIENT_SECRET_PATH=/prod/client_secret.json
-      - RQ_BROKER_URL=redis://spamslaya-redis:6379/0
-      - OLLAMA_URL=http://spamslaya-ollama:11434
+      - SPAM_SLAYA_SECRET_KEY=6oCH3RhzVAenPEuXjuVpqwb4xgDpBWbe
+      - SPAM_SLAYA_DATABASE_URL=sqlite:////prod/db/spamslaya.db
+      - SPAM_SLAYA_GOOGLE_CLIENT_SECRET_PATH=/prod/client_secret.json
+      - SPAM_SLAYA_RQ_BROKER_URL=redis://spamslaya-redis:6379/0
+      - SPAM_SLAYA_OLLAMA_URL=http://spamslaya-ollama:11434
     volumes:
       - ./prod/db:/prod/db
       - ./client_secret.json:/prod/client_secret.json
@@ -35,9 +36,10 @@ services:
     build: .
     container_name: spamslaya-worker
     environment:
-      - DATABASE_URL=sqlite:////prod/db/spamslaya.db
-      - RQ_BROKER_URL=redis://spamslaya-redis:6379/0
-      - OLLAMA_URL=http://spamslaya-ollama:11434
+      - SPAM_SLAYA_DATABASE_URL=sqlite:////prod/db/spamslaya.db
+      - SPAM_SLAYA_RQ_BROKER_URL=redis://spamslaya-redis:6379/0
+      - SPAM_SLAYA_OLLAMA_URL=http://spamslaya-ollama:11434
+      - SPAM_SLAYA_OLLAMA_MODEL=qwen2.5:3b-instruct-q4_0
     volumes:
       - ./prod/db:/prod/db
     command: python worker.py

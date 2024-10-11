@@ -103,6 +103,12 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        {% if dry_run %}
+        <div class="alert alert-info">
+            The <code>DRY_RUN</code> flag has been set. None of the processed
+            messages will get deleted.
+        </div>
+        {% endif %}
         <p>
             You have <b>{{ total_messages }}</b> messages in your inbox.
         </p>

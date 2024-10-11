@@ -44,13 +44,13 @@ def infer_email_type(user_msg):
     client = instructor.from_openai(
         OpenAI(
             base_url=f"{Config.OLLAMA_URL}/v1",
-            api_key="DUMMY"
+            api_key=Config.OLLAMA_API_KEY
             ),
         mode=instructor.Mode.JSON,
     )
 
     response = client.chat.completions.create(
-        model="qwen2.5:3b-instruct-q4_0",
+        model=Config.OLLAMA_MODEL,
         messages=[
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": user_msg[:700]},

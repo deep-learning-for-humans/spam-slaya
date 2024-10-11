@@ -1,13 +1,24 @@
 import os
+from dotenv import load_dotenv
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'foobar'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:////Users/raghothams/code/clean-that-up/app.db'
+
+    load_dotenv()
+
+    dry_run_value = os.environ.get("SPAM_SLAYA_DRY_RUN")
+    DRY_RUN = dry_run_value.upper() == "TRUE" if dry_run_value else False
+
+    LABEL = os.environ.get("SPAM_SLAYA_LABEL_NAME") or "SpamSlaya"
+
+    SECRET_KEY = os.environ.get("SPAM_SLAYA_SECRET_KEY")
+
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SPAM_SLAYA_DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    RQ_BROKER_URL = os.environ.get('RQ_BROKER_URL') or 'redis://0.0.0.0:6379/0'
+    RQ_BROKER_URL = os.environ.get("SPAM_SLAYA_RQ_BROKER_URL")
 
-    CLIENT_SECRET_PATH = os.environ.get('GOOGLE_CLIENT_SECRET_PATH') or 'client_secret.json'
+    CLIENT_SECRET_PATH = os.environ.get("SPAM_SLAYA_GOOGLE_CLIENT_SECRET_PATH")
 
-    OLLAMA_URL = os.environ.get("OLLAMA_URL") or "http://localhost:11434"
-    OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL") or "qwen2.5:3b-instruct-q4_0"
+    OLLAMA_URL = os.environ.get("SPAM_SLAYA_OLLAMA_URL") or "http://localhost:11434"
+    OLLAMA_API_KEY = os.environ.get("SPAM_SLAYA_OLLAMA_API_KEY") or ""
+    OLLAMA_MODEL = os.environ.get("SPAM_SLAYA_OLLAMA_MODEL") or "qwen2.5:3b-instruct-q4_0"

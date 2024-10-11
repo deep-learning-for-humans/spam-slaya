@@ -38,6 +38,11 @@ q = Queue(connection=redis_conn)
 
 ollama = OllamaClient(host=Config.OLLAMA_URL)
 
+if Config.DRY_RUN:
+    print("***********************")
+    print("***** DRY RUN SET *****")
+    print("***********************")
+
 def register_routes(app):
     @app.route('/')
     def index():
@@ -163,7 +168,8 @@ def register_routes(app):
                                total_messages=total_messages,
                                runs_in_process=has_runs_in_process,
                                email_address=email_address,
-                               emails_to_process=emails_to_process)
+                               emails_to_process=emails_to_process,
+                               dry_run=Config.DRY_RUN)
 
     @app.route("/schedule-run", methods=["POST"])
     def schedule_run():
