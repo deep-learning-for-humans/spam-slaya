@@ -50,7 +50,7 @@ def infer_email_type(user_msg):
     )
 
     response = client.chat.completions.create(
-        model="qwen2.5:3b-instruct-q4_0",
+        model=Config.OLLAMA_MODEL,
         messages=[
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": user_msg[:700]},
