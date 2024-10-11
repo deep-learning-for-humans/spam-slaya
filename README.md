@@ -149,7 +149,7 @@ and then you can run it without the dry run.
 To dry run the application, set the `SPAM_SLAYA_DRY_RUN` environment variable to
 `TRUE` and emails will be processed as per usual, but no deletes will happen
 
-### The LLM
+## The LLM
 
 At this point, based on our testing, we have identified that the `qwen2.5:3b-instruct-q4_0` works with a high degree of confidence. In addition, to avoid *sending* your data to anyone, we have chosen to run this via a locally running Ollama server. By our calculations, this should take, on average, a time of 40s - 60s per inference.
 
