@@ -123,6 +123,29 @@ def bg_process_run(run_id):
 
         print(f"To Process: [{run.to_process}]. Processing in [{no_of_batches}] batches with [{max_results}] in each batch")
 
+        print(f"Checking if label '{Config.LABEL}' exists on Gmail: ", end="")
+
+        label_results = service.users().labels().list(userId="me").execute()
+        labels = label_results.get("labels", [])
+
+        matching_labels = [label for label in labels if label["name"] == Config.LABEL]
+        contains_required_label = any(matching_labels)
+
+        print(contains_required_label)
+
+        if contains_required_label:
+            label_to_apply = matching_labels[0]
+        else:
+            print(f"Creating label {Config.LABEL}")
+            label_to_apply = service.users().labels().create(
+                userId = "me",
+                body = {
+                    "labelListVisibility": "labelShowIfUnread",
+                    "messageListVisibility": "show",
+                    "name": Config.LABEL,
+                    "type": "user"
+                }).execute()
+
         results = service.users().messages().list(userId="me", maxResults=max_results).execute()
         messages = results.get("messages", [])
 
@@ -146,7 +169,7 @@ def bg_process_run(run_id):
 
             session.commit()
 
-            process_batch(credentials, batch_id, session)
+            process_batch(credentials, batch_id, session, label_to_apply)
 
             page_token = results.get("nextPageToken", None)
             if page_token:
@@ -179,13 +202,19 @@ that particular RunBatch is completed.
 
 As it processes each email, it writes the results to that row in the RunBatch. 
 """
-def process_batch(credentials, batch_id, session):
+def process_batch(credentials, batch_id, session, spam_slaya_label):
 
         service = build("gmail", "v1", credentials=credentials)
 
         messages = session.query(RunBatch).filter_by(batch_id = batch_id)
         message_count = messages.count()
         msgs_to_delete = []
+
+        labels_to_apply = ["TRASH"]
+        if spam_slaya_label:
+            labels_to_apply.append(spam_slaya_label["id"])
+
+        print(f"Will apply labels: {labels_to_apply}")
 
         for index, message in enumerate(messages, start=1):
 
@@ -216,7 +245,7 @@ def process_batch(credentials, batch_id, session):
 
                     body = {
                         "ids": msgs_to_delete,
-                        "addLabelIds": ["TRASH"]
+                        "addLabelIds": labels_to_apply
                     }
 
                     if Config.DRY_RUN:
@@ -250,7 +279,7 @@ def process_batch(credentials, batch_id, session):
 
             body = {
                 "ids": msgs_to_delete,
-                "addLabelIds": ["TRASH"]
+                "addLabelIds": labels_to_apply
             }
 
             if Config.DRY_RUN:
