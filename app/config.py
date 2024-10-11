@@ -5,6 +5,9 @@ class Config:
 
     load_dotenv()
 
+    dry_run_value = os.environ.get("SPAM_SLAYA_DRY_RUN")
+    DRY_RUN = dry_run_value.upper() == "TRUE" if dry_run_value else False
+
     SECRET_KEY = os.environ.get("SPAM_SLAYA_SECRET_KEY")
 
     SQLALCHEMY_DATABASE_URI = os.environ.get("SPAM_SLAYA_DATABASE_URL")

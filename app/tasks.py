@@ -123,14 +123,6 @@ def bg_process_run(run_id):
 
         print(f"To Process: [{run.to_process}]. Processing in [{no_of_batches}] batches with [{max_results}] in each batch")
 
-        #####
-        # FOR DEVELOPMENT
-        # This must be removed before going live
-        max_results = 20
-        no_of_batches = 2
-        #
-        ######
-
         results = service.users().messages().list(userId="me", maxResults=max_results).execute()
         messages = results.get("messages", [])
 
@@ -227,7 +219,11 @@ def process_batch(credentials, batch_id, session):
                         "addLabelIds": ["TRASH"]
                     }
 
-                    service.users().messages().batchModify(userId="me", body=body).execute()
+                    if Config.DRY_RUN:
+                        print("DRY RUN is set, skipping delete")
+                        print(f"Would have deleted {msgs_to_delete}")
+                    else:
+                        service.users().messages().batchModify(userId="me", body=body).execute()
 
                     msgs_to_delete = []
 
@@ -257,4 +253,8 @@ def process_batch(credentials, batch_id, session):
                 "addLabelIds": ["TRASH"]
             }
 
-            # service.users().messages().batchModify(userId="me", body=body).execute()
+            if Config.DRY_RUN:
+                print("DRY RUN is set, skipping delete")
+                print(f"Would have deleted {msgs_to_delete}")
+            else:
+                service.users().messages().batchModify(userId="me", body=body).execute()
