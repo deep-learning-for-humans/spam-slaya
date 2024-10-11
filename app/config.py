@@ -6,6 +6,7 @@ class Config:
     load_dotenv()
 
     SECRET_KEY = os.environ.get("SPAM_SLAYA_SECRET_KEY")
+
     SQLALCHEMY_DATABASE_URI = os.environ.get("SPAM_SLAYA_DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
