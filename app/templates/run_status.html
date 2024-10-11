@@ -55,8 +55,13 @@
                 </table>
 
                 {% if model.page_should_refresh %}
-                <div class="alert alert-info" role="alert">
-                    Auto refreshing in <span id="seconds-left"></span> seconds
+                <div class="alert alert-info d-flex justify-content-between align-items-baseline" role="alert">
+                    <span>
+                        Auto refreshing in <span id="seconds-left"></span> seconds. 
+                    </span>
+                    <button id="refresh-link" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
                 </div>
                 {% endif %}
 
@@ -187,6 +192,10 @@
             PAUSE_TIMER = false;
         });
 
+        $("#refresh-link").on("click", function(){
+            window.location.reload();
+        });
+
         {% if model.page_should_refresh %}
         setInterval(() => {
 
@@ -208,8 +217,6 @@
     $(function(){
         activate();
         bindEvents();
-
-
     })
 </script>
 {% endblock %}
