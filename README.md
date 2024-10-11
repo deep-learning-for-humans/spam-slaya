@@ -154,7 +154,7 @@ We highly recommend that you read through the code, to make sure that you unders
 - [X] Limit message processing to 500 at a time
 - [X] Move to `deep learning for humans`
 - [X] Change name
-- [ ] Normalize the environment variables with a prefix
+- [X] Normalize the environment variables with a prefix
 - [ ] Documentation for "running the project"
 - [ ] Add label to the emails deleted, so that one can filter these emails in trash
 - [ ] Remove `client_secret.json` and purge it from git. Rotate creds
