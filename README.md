@@ -188,3 +188,4 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [ ] Remove `client_secret.json` and purge it from git. Rotate creds
 - [X] Add a short video of the entire flow of the app
 - [ ] Set default number of emails to 300 in the popup
+- [ ] Slay OTP emails that are more than 1 week old
