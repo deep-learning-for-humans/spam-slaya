@@ -113,13 +113,13 @@
             You have <b>{{ total_messages }}</b> messages in your inbox.
         </p>
         <p>
-            To keep processing predictable, we have set a limit of 500 records
+            To keep processing predictable, we have set a limit of {{ max_messages_per_schedule }} records
             per schedule. This is the max that you will be able to process at
-            a time. If you wish to process lesser records than 500, use the
+            a time. If you wish to process lesser records than {{ max_messages_per_schedule }}, use the
             textbox below to reflect the number of messages you wish to process
         </p>
         <label for="messages-to-process-textbox" class="form-label">No. of messages to process</label>
-        <input form="schedule-run-form" type="number" class="form-control" id="messages-to-process-textbox" name="no_of_emails_to_process" value="{{ emails_to_process }}" required max="500">
+        <input form="schedule-run-form" type="number" class="form-control" id="messages-to-process-textbox" name="no_of_emails_to_process" value="{{ emails_to_process }}" required max="{{ max_messages_per_schedule }}">
       </div>
       <div class="modal-footer">
         <form id="schedule-run-form" action="/schedule-run" method="POST">

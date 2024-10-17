@@ -8,6 +8,8 @@ class Config:
     dry_run_value = os.environ.get("SPAM_SLAYA_DRY_RUN")
     DRY_RUN = dry_run_value.upper() == "TRUE" if dry_run_value else False
 
+    MAX_MESSAGES_PER_SCHEDULE = os.environ.get("SPAM_SLAYA_MAX_MESSAGES_PER_SCHEDULE") or 300
+
     LABEL = os.environ.get("SPAM_SLAYA_LABEL_NAME") or "SpamSlaya"
 
     SECRET_KEY = os.environ.get("SPAM_SLAYA_SECRET_KEY")

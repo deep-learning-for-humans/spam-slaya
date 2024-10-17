@@ -112,8 +112,8 @@ def bg_process_run(run_id):
         credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
         service = build("gmail", "v1", credentials=credentials)
 
-        max_results = 500
-        if run.to_process < 500:
+        max_results = Config.MAX_MESSAGES_PER_SCHEDULE
+        if run.to_process < Config.MAX_MESSAGES_PER_SCHEDULE:
             max_results = run.to_process
             no_of_batches = 1
         else:
