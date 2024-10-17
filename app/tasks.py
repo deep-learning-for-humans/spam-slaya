@@ -224,6 +224,7 @@ def process_batch(credentials, batch_id, session, spam_slaya_label):
                 email = service.users().messages().get(userId="me", id=message.message_id, format="raw").execute()
                 body = email_utils.get_email_body(email["raw"])
                 subject = email_utils.get_email_subject(email["raw"])
+                rfc822_message_id = email_utils.get_email_message_id(email["raw"])
 
                 if not subject:
                     subj = ""
@@ -233,6 +234,7 @@ def process_batch(credentials, batch_id, session, spam_slaya_label):
 
                 print(f"Message {subject} Inference: {ai_inference}")
 
+                message.rfc822_message_id = rfc822_message_id
                 message.subject = subject
                 message.reason = ai_inference.reason
                 message.action = MessageActionEnum[ai_inference.action]

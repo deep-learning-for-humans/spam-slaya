@@ -57,6 +57,7 @@ class RunBatch(db.Model):
     run_id = Column(UUID(as_uuid=True), ForeignKey('runs.id'), nullable=False)
     batch_id = Column(UUID(as_uuid=True), default=uuid.uuid4)
     message_id = Column(String, nullable=False)
+    rfc822_message_id = Column(String, nullable=True)
     subject = Column(String, nullable=True)
     reason = Column(String, nullable=True)
     action = Column(Enum(MessageActionEnum), nullable=False, default=MessageActionEnum.TBD)

@@ -52,6 +52,17 @@ def get_email_subject(raw_email_base64):
     return subject
 
 
+def get_email_message_id(raw_email_base64):
+    if not raw_email_base64:
+        return None
+
+    raw_email = base64.urlsafe_b64decode(raw_email_base64).decode("utf-8")
+    msg = email.message_from_string(raw_email)
+
+    message_id = msg["Message-ID"] or None
+    return message_id
+
+
 def get_email_body(raw_email_base64):
     if not raw_email_base64:
         return None
