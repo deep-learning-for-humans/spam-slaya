@@ -258,12 +258,6 @@ def process_batch(credentials, batch_id, session, spam_slaya_label):
 
                     msgs_to_delete = []
 
-                # Every 15th call, sleep for 10 seconds to not
-                # hit the rate limit on the Open AI side
-                if index % 15 == 0:
-                    time.sleep(10)
-
-
             except Exception as ex:
                 print(f"Exception: When processing message {message.message_id} with message {ex}")
                 print(traceback.format_exc())
