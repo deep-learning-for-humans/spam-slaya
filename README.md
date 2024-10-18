@@ -190,5 +190,6 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [X] Allow linking directly to the email
 - [X] Remove openai rate limit
 - [ ] Slay OTP emails that are more than 1 week old
+  - [ ] Populate now - email date somewhere to do OTP operations on
 - [ ] Fix docker initial launch problem
 - [ ] Remove `client_secret.json` and purge it from git. Rotate creds
