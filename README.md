@@ -185,8 +185,10 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [X] Normalize the environment variables with a prefix
 - [X] Documentation for "running the project"
 - [X] Add label to the emails deleted, so that one can filter these emails in trash
-- [ ] Remove `client_secret.json` and purge it from git. Rotate creds
 - [X] Add a short video of the entire flow of the app
 - [X] Set default number of emails to 300 in the popup
+- [X] Allow linking directly to the email
+- [X] Remove openai rate limit
 - [ ] Slay OTP emails that are more than 1 week old
 - [ ] Fix docker initial launch problem
+- [ ] Remove `client_secret.json` and purge it from git. Rotate creds
