@@ -33,24 +33,6 @@
                             <th>Status</th>
                             <td>{{ model.run.status.value }}</td>
                         </tr>
-                        <!--
-                        <tr>
-                            <th>Messages to process</th>
-                            <td>{{ model.count }}</td>
-                        </tr>
-                        <tr>
-                            <th>Messages processed</th>
-                            <td>{{ model.process_count }}</td>
-                        </tr>
-                        <tr>
-                            <th>Messages with error (unprocessed)</th>
-                            <td>{{ model.error_count }}</td>
-                        </tr>
-                        <tr>
-                            <th>Messages to delete</th>
-                            <td>{{ model.delete_count }}</td>
-                        </tr>
-                        -->
                     </tbody>
                 </table>
 
@@ -64,6 +46,14 @@
                     </button>
                 </div>
                 {% endif %}
+
+                <p>
+                    Any email marked with <span class="text-primary"><i class="bi bi-box-arrow-up-right"></i></span>
+                    is clickable and it will take you to your inbox and search
+                    for that email. Do note that at this time, the assumption is
+                    that the inbox you wish to clean is your first inbox. If it
+                    is not the first, the email linking might not work
+                </p>
 
                 <p>
                     Everything marked as <span class="text-danger">DELETE</span>
@@ -107,20 +97,24 @@
                             <th width="10%">Reason</th>
                             <th width="10%">Action</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         {% for result in model.batch_results %}
                         {% if result.action.value != "TBD" %}
                         <tr>
-                            <td class="overflow-hidden">
-                                {% if result.action.value.upper() == "DELETE" %}
-                                    <i class="bi-envelope-slash text-danger"></i>
-                                {% else %}
-                                    <i class="bi-envelope-check"></i>
-                                {% endif %}
-                                {{ result.subject }}
+                            <td class="overflow-hidden d-flex justify-content-between position-relative">
+                                <span>
+                                    {% if result.action.value.upper() == "DELETE" %}
+                                        <i class="bi-envelope-slash text-danger"></i>
+                                    {% else %}
+                                        <i class="bi-envelope-check"></i>
+                                    {% endif %}
+                                    {{ result.subject }} 
+                                </span>
                                 {% if result.rfc822_message_id %}
-                                    <a href="https://mail.google.com/mail/u/0/#search/rfc822msgid:{{ result.rfc822_message_id }}" target="_blank">
-                                        <i class="bi bi-box-arrow-up-right"></i>
-                                    </a>
+                                <a class="stretched-link" href="https://mail.google.com/mail/u/0/#search/rfc822msgid:{{ result.rfc822_message_id }}" target="_blank">
+                                    <i class="bi bi-box-arrow-up-right"></i>
+                                </a>
                                 {% endif %}
                             </td>
                             <td>{{ result.reason }}</td>
@@ -132,7 +126,7 @@
                         </tr>
                         {% endif %}
                         {% endfor %}
-                    </thead>
+                    </tbody>
                 </table>
             </div>
         </div>
