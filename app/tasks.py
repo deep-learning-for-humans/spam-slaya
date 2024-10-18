@@ -226,6 +226,11 @@ def process_batch(credentials, batch_id, session, spam_slaya_label):
                 subject = email_utils.get_email_subject(email["raw"])
                 rfc822_message_id = email_utils.get_email_message_id(email["raw"])
 
+                received_on = datetime.datetime.utcfromtimestamp(int(email["internalDate"])/1000)
+                now = datetime.datetime.utcnow()
+                time_diff = now - received_on
+                print(f"Received on: {received_on}. Today: {now}. Difference: {time_diff}")
+
                 if not subject:
                     subj = ""
                 else:
