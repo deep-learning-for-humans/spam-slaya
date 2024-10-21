@@ -195,3 +195,4 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [ ] Remove `client_secret.json` and purge it from git. Rotate creds
 - [ ] Setup spamslaya.com and required redirects
 - [ ] Setup demo.spamslaya.com
+- [ ] Test with replicate for FF setup
