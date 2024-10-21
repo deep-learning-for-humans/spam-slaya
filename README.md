@@ -193,3 +193,5 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
   - [ ] Populate now - email date somewhere to do OTP operations on
 - [ ] Fix docker initial launch problem
 - [ ] Remove `client_secret.json` and purge it from git. Rotate creds
+- [ ] Setup spamslaya.com and required redirects
+- [ ] Setup demo.spamslaya.com
