@@ -192,7 +192,7 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [ ] Slay OTP emails that are more than 1 week old
   - [ ] Populate now - email date somewhere to do OTP operations on
 - [X] Fix docker initial launch problem
-- [ ] Remove `client_secret.json` and purge it from git. Rotate creds
+- [X] Remove `client_secret.json` and purge it from git. Rotate creds
 - [ ] Setup spamslaya.com and required redirects
 - [ ] Setup demo.spamslaya.com
 - [ ] Test with replicate for FF setup
