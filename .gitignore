@@ -1,3 +1,7 @@
+# Ignore the client secrets file
+client_secret.json
+client_secrets.json
+
 # Ignore .env file (specific to each dev's machine)
 .env
 
