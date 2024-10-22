@@ -65,7 +65,7 @@ This starts with having to get your own OAuth2 credentials (sorry).
   </tbody>
 </table>
 
-4. At this stage, go to the [API Library](https://console.cloud.google.com/apis/library). This is where we will enable the APIs required.
+4. At this stage, in the [API Library](https://console.cloud.google.com/apis/library), we can enable the APIs required.
 5. The API we are interested in and need access to, is the Gmail API. You can access this via the [direct link too](https://console.cloud.google.com/apis/library/gmail.googleapis.com).
 6. Click "Enable" to enable this API for the project. Once you enable it, it will take you to a API/Service details page which will show you usage of this API
 7. Now we must generate credentials. To do so, click on the "Credentials" tab, or use [this link](https://console.cloud.google.com/apis/api/gmail.googleapis.com/credentials).
@@ -74,7 +74,7 @@ This starts with having to get your own OAuth2 credentials (sorry).
     - Give your app a name. I used "Clean it up". And give an email address, I used mine. Skip everything else on this page except the *Developer contact information* at the end, where again I gave my email.
     - Hit "Save and continue"
     - In the "Scopes" screen, Do the following by clicking "Add or remove scopes" button
-      - Search for "Gmail API" in the filter box
+      - Search for "Gmail API" in the filter box (set rows per page to **20** for quick searchability)
       - Select scope `https://mail.google.com/` that allows for *Read, compose, send and permanently delete all your email from Gmail*
       - Select scope `.../auth/gmail.readonly` that allows for *View your email messages and setting*s
       - Select scope `.../auth/gmail.labels` that allows for *See and edit your email labels*
@@ -135,6 +135,7 @@ This starts with having to get your own OAuth2 credentials (sorry).
 - Generate the google credentials and download your `client_secret.json`
   - We are sorry about this, again.
 - Clone the project (with git or https)
+- Drop the `client_secret.json` inside the cloned folder
 - Check the `docker-compose.yml` file and customize the variables in `environment` as per your needs
   - There are some defaults here, and these are the defaults we have used.
 - Run `docker compose up` to start all the services 
@@ -189,10 +190,13 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [X] Set default number of emails to 300 in the popup
 - [X] Allow linking directly to the email
 - [X] Remove openai rate limit
-- [ ] Slay OTP emails that are more than 1 week old
-  - [ ] Populate now - email date somewhere to do OTP operations on
 - [X] Fix docker initial launch problem
 - [X] Remove `client_secret.json` and purge it from git. Rotate creds
 - [ ] Setup spamslaya.com and required redirects
+
+## Future
+
 - [ ] Setup demo.spamslaya.com
 - [ ] Test with replicate for FF setup
+- [ ] Slay OTP emails that are more than 1 week old
+  - [ ] Populate now - email date somewhere to do OTP operations on
