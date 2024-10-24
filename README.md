@@ -162,39 +162,14 @@ At this point, based on our testing, we have identified that the `qwen2.5:3b-ins
 
 We do understand that taxing our users to download a ~ 2GB model file is a lot to ask, but it is a small price to pay considering that our data is not being sent to a 3rd party service. 
 
+This can be customized by setting the `SPAM_SLAYA_OLLAMA_MODEL` variable in the `docker-compose.yml` file.
+
 # Note
 
 - We highly recommend that you read through the code, to make sure that you understand what we are doing with your data. We don’t send this information back to ourselves (there is no hosted instance anywhere). We wrote this, to solve OUR problem, and we hope that it helps solve yours too.
 - The first time, we have to download the LLM. This will take some time to get (the file is about 1.7GB so it will take some time depending on your internet connection)
 
 # TODO
-
-- [X] Remove all existing POC code (bootstrap, etc) and keep only bare minimum OAuth flow
-- [X] Plan out data & process
-- [X] Introduce dependencies - SQLite, SQLAlchemy, Celery 
-- [X] Get user ID from Gmail via oauth and store in DB
-- [X] Store Open API Key in SQLite 
-- [X] Create background job to get emails
-- [X] Write status page
-- [X] Wire in LLM logic (Rags)
-- [X] Docker compose
-- [X] Handle workers gracefully
-- [X] Run flask in production mode inside docker (currently runs in dev)
-- [X] Limit message processing to 500 at a time
-- [X] Move to `deep learning for humans`
-- [X] Change name
-- [X] Normalize the environment variables with a prefix
-- [X] Documentation for "running the project"
-- [X] Add label to the emails deleted, so that one can filter these emails in trash
-- [X] Add a short video of the entire flow of the app
-- [X] Set default number of emails to 300 in the popup
-- [X] Allow linking directly to the email
-- [X] Remove openai rate limit
-- [X] Fix docker initial launch problem
-- [X] Remove `client_secret.json` and purge it from git. Rotate creds
-- [X] Setup spamslaya.com and required redirects
-
-## Future
 
 - [ ] Setup demo.spamslaya.com
 - [ ] Test with replicate for FF setup
