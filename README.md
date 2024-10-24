@@ -192,7 +192,7 @@ We do understand that taxing our users to download a ~ 2GB model file is a lot t
 - [X] Remove openai rate limit
 - [X] Fix docker initial launch problem
 - [X] Remove `client_secret.json` and purge it from git. Rotate creds
-- [ ] Setup spamslaya.com and required redirects
+- [X] Setup spamslaya.com and required redirects
 
 ## Future
 
