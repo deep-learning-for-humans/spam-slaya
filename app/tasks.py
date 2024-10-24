@@ -228,14 +228,13 @@ def process_batch(credentials, batch_id, session, spam_slaya_label):
 
                 received_on = datetime.datetime.utcfromtimestamp(int(email["internalDate"])/1000)
                 now = datetime.datetime.utcnow()
-                time_diff = now - received_on
-                print(f"Received on: {received_on}. Today: {now}. Difference: {time_diff}")
+                time_diff_in_days = (now - received_on).days
 
                 if not subject:
                     subj = ""
                 else:
                     subj = subject
-                ai_inference = ai_utils.infer_email_type(subj + body)
+                ai_inference = ai_utils.infer_email_type(subj, body, time_diff_in_days)
 
                 print(f"Message {subject} Inference: {ai_inference}")
 
