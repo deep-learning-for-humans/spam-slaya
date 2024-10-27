@@ -8,29 +8,55 @@ In today's digital world, your email address is a key part of your identity. Yet
 
 ## Solution
 
-Our solution is to have something that helps automate email cleaning service while prioritizing your privacy. Here is how it works:
+At the core, the solution looks something like 
 
-1. **Smart Automation**: It runs quietly in the background, analyzing your emails with advanced language models. It intelligently determines which emails are worth keeping and which can be safely deleted.
-2. **Privacy First**: We know how vital your personal information is. That’s why our solution is a local application that runs on your own device. No data is sent to the cloud, ensuring your inbox remains just that—yours!
-3. **User-Friendly**: While we recommend some technical know-how for setup, once it’s running, anyone can enjoy a clutter-free inbox without any hassle.
+```py
+for email in inbox:
+  result = ai.infer(email)
+  if result.is_spam:
+    queue_for_delete(email)
+```
 
-To get started with this, we will need to generate credentials that will allow us to connect to a Google account because we use the Gmail API to fetch your emails. 
+But this raises 2 important questions
 
-### Caveat with Google Credentials
+1. Is each email in the inbox is sent to an AI for inference?
+2. Why should I give **you** access to **my** inbox?
 
-Because of Google’s restrictions on who can get access to email inboxes (very rightfully so), we decided that we will never be a "verified" application. Verification by Google is a long drawn process that involves multiple hoops to jump through (and keep jumping through year after year). 
+**Is each email in the inbox is sent to an AI for inference?**
 
-We have thoroughly detailed the steps that need to be followed in the link below that will allow you to generate your Google Credentials. For each credential you generate, up to 100 people can be added to it. We recommend that you use this only for very close friends and family.
+The short answer is **yes**. 
+
+The long answer is that it is sent to an AI but **not sent outside** your machine. The entire solution relies on Ollama at the core, to keep everything running locally. No data is sent to the cloud, ensuring your inbox remains just that — yours!
+
+**Why should I give _you_ access to _my_ inbox?**
+
+You don't need to. Google already makes this hard by requesting that anyone requesting for access to "sensitive data" (like reading the content of emails, deleting,  etc) needs to undergo a _verification_ process that is long and comprehensive (with good reason). 
+
+For this reason, we require you to generate your own credentials to use the app. It takes a few minutes, but is worth it because you get an extra layer of confidence.
+
+Additionally, any emails that we delete, we add a `Spam Slaya` label on them, so that it will make it easier to filter by this, to see which emails were deleted from the app. This will allow you to easily track down the deletes and act on them, should you need to.
+
+---
+
+Fundamentally, the core of the solution is this: 
+
+- My Inbox
+- My AI
+- My Compute
+- My Credentials
+
+We get **no access** to anything from your end. 
+
+A guarentee like this, requires some technical know-how for setup, but once it’s running, you and your friends & family can enjoy a clutter-free inbox without any hassle.
+
+So let's get started.
 
 ### Generating Google Credentials
 
-#### Problem
+Because of Google’s restrictions on who can get access to email inboxes (very rightfully so), we decided that **we will never be a "verified" application**. 
 
-Because the problem statement of trying to clear out our inboxes is such a privacy sensitive one, it would be a rather time taking process for a side project to go through the crazy hoops of getting "verified" so that we can offer this as a service. 
+We have thoroughly detailed the steps that need to be followed in the link below that will allow you to generate your Google Credentials. For each credential you generate, up to 100 people can be added to it. We recommend that you use this only for very close friends and family.
 
-The middle ground would be to make this as simple as we can, to run this project locally or for your loved ones. 
-
-This starts with having to get your own OAuth2 credentials (sorry).
 
 #### Process
 
@@ -155,6 +181,8 @@ To dry run the application, set the `SPAM_SLAYA_DRY_RUN` environment variable to
 Below is a full run of the application. Please note that the initial 4 minutes and 11 seconds are spent to download the LLM. It is intentionally kept to show the **full** end to end usage of the application.
 
 https://github.com/user-attachments/assets/8c05ced6-ca26-4b7d-aca3-fb173299d0f8
+
+_Note: This is a little outdated, will update it soon. The fundamental flow remains the same however_
 
 ## The LLM
 
