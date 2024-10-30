@@ -157,6 +157,8 @@ We have thoroughly detailed the steps that need to be followed in the link below
 
 # Running the project
 
+## Recommended way (docker)
+
 - Install docker. We required version 2 and up.
 - Generate the google credentials and download your `client_secret.json`
   - We are sorry about this, again.
@@ -167,7 +169,21 @@ We have thoroughly detailed the steps that need to be followed in the link below
 - Run `docker compose up` to start all the services 
 - Visit `http://localhost:8080` to start using the app
 
-**Dry run**
+## For development
+
+- For development you need 3 things installed
+  1. Python
+  2. Ollama
+  3. Redis
+- Run redis 
+- Run Ollama
+- Create a virtual env
+- Run `pip install -r requirements.txt`
+- Copy `.env.example` to `.env` and set the required variables
+- Run `python worker.py`
+- Run `python run.py`
+
+# Dry run
 
 There is a method to dry run the entire application and we highly recommend you
 run it in this mode first. That way you get a "feel" for the entire operation
@@ -176,7 +192,7 @@ and then you can run it without the dry run.
 To dry run the application, set the `SPAM_SLAYA_DRY_RUN` environment variable to
 `TRUE` and emails will be processed as per usual, but no deletes will happen
 
-**Video**
+# Demo
 
 Below is a full run of the application. Please note that the initial 4 minutes and 11 seconds are spent to download the LLM. It is intentionally kept to show the **full** end to end usage of the application.
 
@@ -184,7 +200,7 @@ https://github.com/user-attachments/assets/8c05ced6-ca26-4b7d-aca3-fb173299d0f8
 
 _Note: This is a little outdated, will update it soon. The fundamental flow remains the same however_
 
-## The LLM
+# The LLM
 
 At this point, based on our testing, we have identified that the `qwen2.5:3b-instruct-q4_0` works with a high degree of confidence. In addition, to avoid *sending* your data to anyone, we have chosen to run this via a locally running Ollama server. By our calculations, this should take, on average, a time of 40s - 60s per inference.
 
