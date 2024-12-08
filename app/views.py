@@ -127,26 +127,15 @@ def register_routes(app):
     @app.route("/home")
     def home():
         user_id = session.get("user")
-
         if not user_id:
-            print("no user_id. Redirecting to login")
             return redirect(url_for("login"))
 
         user = User.query.filter_by(id=user_id).first()
+        credentials = get_valid_credentials(user)
 
-        if not user or not user.gmail_credentials:
-            # use flash here
-            print("no user no gmail creds. Redirecting to login")
+        if not credentials:
             return redirect(url_for("login"))
 
-        print(datetime.datetime.utcnow(), user.gmail_credential_expiry)
-
-        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
-            # credentials have expired. Flash this
-            print("Credentials expired. Redirecting to login")
-            return redirect(url_for("login"))
-
-        credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
         service = build("gmail", "v1", credentials=credentials)
 
         user_profile = service.users().getProfile(userId = user_id).execute()
@@ -175,21 +164,13 @@ def register_routes(app):
     @app.route("/schedule-run", methods=["POST"])
     def schedule_run():
         user_id = session.get("user")
-
         if not user_id:
-            print("no user_id. Redirecting to login")
             return redirect(url_for("login"))
 
         user = User.query.filter_by(id=user_id).first()
+        credentials = get_valid_credentials(user)
 
-        if not user or not user.gmail_credentials:
-            # use flash here
-            print("no user or no gmail creds. Redirecting to login")
-            return redirect(url_for("login"))
-
-        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
-            # credentials have expired. Flash this
-            print("Credentials expired. Redirecting to login")
+        if not credentials:
             return redirect(url_for("login"))
 
         no_of_emails_to_process = request.form.get("no_of_emails_to_process", None)
@@ -219,21 +200,13 @@ def register_routes(app):
     @app.route("/run-status/<run_id>", methods=["GET"])
     def run_status(run_id):
         user_id = session.get("user")
-
         if not user_id:
-            print("no user_id. Redirecting to login")
             return redirect(url_for("login"))
 
         user = User.query.filter_by(id=user_id).first()
+        credentials = get_valid_credentials(user)
 
-        if not user or not user.gmail_credentials:
-            # use flash here
-            print("no user or no gmail creds. Redirecting to login")
-            return redirect(url_for("login"))
-
-        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
-            # credentials have expired. Flash this
-            print("Credentials expired. Redirecting to login")
+        if not credentials:
             return redirect(url_for("login"))
 
         run = Run.query.get(uuid.UUID(run_id))
@@ -282,21 +255,13 @@ def register_routes(app):
     @app.route("/abandon-run", methods=["POST"])
     def abandon_run():
         user_id = session.get("user")
-
         if not user_id:
-            print("no user_id. Redirecting to login")
             return redirect(url_for("login"))
 
         user = User.query.filter_by(id=user_id).first()
+        credentials = get_valid_credentials(user)
 
-        if not user or not user.gmail_credentials:
-            # use flash here
-            print("no user or no gmail creds. Redirecting to login")
-            return redirect(url_for("login"))
-
-        if datetime.datetime.utcnow() > user.gmail_credential_expiry:
-            # credentials have expired. Flash this
-            print("Credentials expired. Redirecting to login")
+        if not credentials:
             return redirect(url_for("login"))
 
         run_id = request.form.get("run_id", None)
@@ -313,3 +278,24 @@ def register_routes(app):
 
         flash("Run has been marked as DONE WITH ERRORS. You can now schedule another run")
         return redirect(url_for("home"))
+
+
+    def get_valid_credentials(user):
+        """Helper function to get valid credentials, refreshing if necessary"""
+        if not user or not user.gmail_credentials:
+            return None
+
+        credentials = Credentials.from_authorized_user_info(json.loads(user.gmail_credentials))
+
+        if not credentials.valid:
+            if credentials.expired and credentials.refresh_token:
+                credentials.refresh(requests.Request())
+                # Update stored credentials after refresh
+                user.gmail_credentials = credentials.to_json()
+                user.gmail_credential_expiry = credentials.expiry
+                db.session.add(user)
+                db.session.commit()
+            else:
+                return None
+
+        return credentials
